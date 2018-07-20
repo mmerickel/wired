@@ -1,0 +1,14 @@
+[run]
+parallel = true
+source =
+    wired
+    tests
+
+[paths]
+source =
+    src/wired
+    */site-packages/wired
+
+[report]
+show_missing = true
+precision = 2
