@@ -135,7 +135,7 @@ Binding to a context
 
 Container objects are thin wrappers around a service cache and it's possible to create more than one at a time, each bound to a different context in order to simplify calls to :meth:`wired.ServiceContainer.get`. Bound containers are created automatically when invoking service factories if a ``context`` is passed to ``container.get(..., context=...)``. Alternatively, bind a container manually for reuse via :meth:`wired.ServiceContainer.bind`. Using a bound container, all calls to ``.get`` will, by default, use the bound context.
 
-Any factories registered for ``context=None`` (which is the default registration) will not be affected by any of this and will always receive a ``containercontext`` value of ``None``.
+Any factories registered for ``context=None`` (which is the default registration) will not be affected by any of this and will always receive a ``container.context`` value of ``None``.
 
 Injecting services into a container manually
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
