@@ -1,4 +1,4 @@
-1.0 (unreleased)
+0.1 (2018-08-01)
 ================
 
 - Initial release.

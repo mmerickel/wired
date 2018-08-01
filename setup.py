@@ -23,7 +23,7 @@ tests_require = [
 
 setup(
     name='wired',
-    version='0.1',
+    version='0.1.post1',
     description='An inversion-of-control (IoC) container.',
     long_description=readme + '\n\n' + changes,
     author='Michael Merickel',
