@@ -31,8 +31,8 @@ class IServiceInstance(Interface):
     """ A marker interface for service instances."""
 
 
-class IContextRef(Interface):
-    """ A marker interface for the context weakref."""
+class IContextFinalizer(Interface):
+    """ A marker interface for a finalizer invocable when a context dies."""
 
 
 class ServiceFactoryInfo:
@@ -56,34 +56,59 @@ class ServiceCache:
     A per-context registry that avoids leaking memory when a context object
     is garbage collected.
 
+    The goal of the cache is to keep any instantiated services alive for
+    ``min(context_lifetime, self_lifetime)``.
+
     """
     _AdapterRegistry = AdapterRegistry  # for testing
 
     def __init__(self):
         self.contexts = {}
+        self.ref = weakref.ref(self)
+
+    def __del__(self):
+        # try to remove the finalizers from the contexts incase the context
+        # is still alive, there's no sense in having a weakref attached to it
+        # now that the cache is dead
+        for ctx_id, ctx_cache in self.contexts.items():
+            finalizer = ctx_cache.lookup(
+                (),
+                IContextFinalizer,
+                name='',
+                default=_marker,
+            )
+            if finalizer is not _marker:  # pragma: no cover
+                finalizer.detach()
 
     def get(self, context):
         ctx_id = id(context)
-        cache = self.contexts.get(ctx_id, None)
-        if cache is None:
-            cache = self._AdapterRegistry()
-            if context is not None:
-                cache_ref = weakref.ref(self)
+        ctx_cache = self.contexts.get(ctx_id, None)
+        if ctx_cache is None:
+            ctx_cache = self._AdapterRegistry()
+            try:
+                finalizer = weakref.finalize(
+                    context,
+                    context_finalizer,
+                    cache_ref=self.ref,
+                    ctx_id=ctx_id,
+                )
+            except TypeError:
+                # not every type supports weakrefs, in which case we
+                # simply cannot release the ctx_cache early
+                pass
+            else:
+                finalizer.atexit = False
+                ctx_cache.register((), IContextFinalizer, '', finalizer)
+            self.contexts[ctx_id] = ctx_cache
+        return ctx_cache
 
-                def context_callback(_):
-                    cache = cache_ref()
-                    if cache is not None and ctx_id in cache.contexts:
-                        del cache.contexts[ctx_id]
-                try:
-                    ctx_ref = weakref.ref(context, context_callback)
-                except TypeError:  # pragma: no cover
-                    # not every type supports weakrefs, in which case we
-                    # simply cannot release the cache early
-                    pass
-                else:
-                    cache.register((), IContextRef, '', ctx_ref)
-            self.contexts[ctx_id] = cache
-        return cache
+
+def context_finalizer(cache_ref, ctx_id):  # pragma: no cover
+    # if the context lives longer than self then remove it
+    # to avoid keeping any refs to the registry
+    cache = cache_ref()
+    if cache is not None and ctx_id in cache.contexts:
+        del cache.contexts[ctx_id]
 
 
 class ServiceContainer:
