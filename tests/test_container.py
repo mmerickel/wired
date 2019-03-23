@@ -204,3 +204,16 @@ def test_unregistered_lookup(registry):
     with pytest.raises(LookupError):
         c.get(IBarService)  # IFooService is not specific enough
     assert c.get(IBarService, default=marker) is marker
+
+
+def test_unique_class_objects_with_same_name_dont_conflict(registry):
+    def make_class():
+        class Greeter:
+            pass
+
+        return Greeter
+
+    ClassA = make_class()
+    ClassB = make_class()
+    registry.register_singleton(ClassA(), ClassA)
+    assert registry.find_factory(ClassB) is None

@@ -3,6 +3,9 @@ unreleased
 
 - Add support for Python 3.7.
 
+- Fix an issue where two different service classes with the same name would
+  be treated as the same service, defeating the type-based lookup.
+
 0.1.1 (2018-08-04)
 ==================
 
