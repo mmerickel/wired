@@ -1,25 +1,19 @@
 from setuptools import setup, find_packages
 
+
 def readfile(name):
     with open(name) as f:
         return f.read()
 
+
 readme = readfile('README.rst')
 changes = readfile('CHANGES.rst')
 
-requires = [
-    'zope.interface',
-]
+requires = ['zope.interface']
 
-docs_require = [
-    'Sphinx',
-    'pylons-sphinx-themes',
-]
+docs_require = ['Sphinx', 'pylons-sphinx-themes']
 
-tests_require = [
-    'pytest',
-    'pytest-cov',
-]
+tests_require = ['pytest', 'pytest-cov']
 
 setup(
     name='wired',
@@ -34,20 +28,19 @@ setup(
     include_package_data=True,
     python_requires='>=3.4',
     install_requires=requires,
-    extras_require={
-        'docs': docs_require,
-        'testing': tests_require,
-    },
+    extras_require={'docs': docs_require, 'testing': tests_require},
     test_suite='tests',
     zip_safe=False,
-    keywords=','.join([
-        'ioc container',
-        'inversion of control',
-        'dependency injection',
-        'service locator',
-        'singleton',
-        'service factory',
-    ]),
+    keywords=','.join(
+        [
+            'ioc container',
+            'inversion of control',
+            'dependency injection',
+            'service locator',
+            'singleton',
+            'service factory',
+        ]
+    ),
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',

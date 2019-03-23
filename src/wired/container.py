@@ -1,9 +1,5 @@
 import weakref
-from zope.interface import (
-    Interface,
-    implementedBy,
-    providedBy,
-)
+from zope.interface import Interface, implementedBy, providedBy
 from zope.interface.interface import InterfaceClass
 from zope.interface.interfaces import IInterface
 from zope.interface.adapter import AdapterRegistry
@@ -60,6 +56,7 @@ class ServiceCache:
     ``min(context_lifetime, self_lifetime)``.
 
     """
+
     _AdapterRegistry = AdapterRegistry  # for testing
 
     def __init__(self):
@@ -72,10 +69,7 @@ class ServiceCache:
         # now that the cache is dead
         for ctx_id, ctx_cache in self.contexts.items():
             finalizer = ctx_cache.lookup(
-                (),
-                IContextFinalizer,
-                name='',
-                default=_marker,
+                (), IContextFinalizer, name='', default=_marker
             )
             if finalizer is not _marker:  # pragma: no cover
                 finalizer.detach()
@@ -122,6 +116,7 @@ class ServiceContainer:
     when possible based on the context and requested interface.
 
     """
+
     _ServiceCache = ServiceCache  # for testing
 
     def __init__(self, factories, cache=None, context=None):
@@ -139,18 +134,11 @@ class ServiceContainer:
         if context is self.context:
             return self
         return self.__class__(
-            factories=self.factories,
-            cache=self.cache,
-            context=context,
+            factories=self.factories, cache=self.cache, context=context
         )
 
     def set(
-        self,
-        service,
-        iface_or_type=Interface,
-        *,
-        context=Interface,
-        name=''
+        self, service, iface_or_type=Interface, *, context=Interface, name=''
     ):
         """
         Add a service instance to the container.
@@ -184,14 +172,10 @@ class ServiceContainer:
         if inst is not _marker:
             raise ValueError(
                 'a service instance is already cached that would conflict '
-                'with this registration')
+                'with this registration'
+            )
 
-        cache.register(
-            (IServiceInstance, context_iface),
-            iface,
-            name,
-            service,
-        )
+        cache.register((IServiceInstance, context_iface), iface, name, service)
 
     def get(
         self,
@@ -254,10 +238,7 @@ class ServiceContainer:
                 return inst
 
         svc_info = self.factories.lookup(
-            (IServiceFactory, context_iface),
-            iface,
-            name=name,
-            default=_marker,
+            (IServiceFactory, context_iface), iface, name=name, default=_marker
         )
         if svc_info is _marker:
             if default is not _marker:
@@ -300,6 +281,7 @@ class ServiceRegistry:
     tests or for any other purposes.
 
     """
+
     _AdapterRegistry = AdapterRegistry  # for testing
     _ServiceContainer = ServiceContainer  # for testing
 
@@ -328,12 +310,7 @@ class ServiceRegistry:
         return self._ServiceContainer(self.factories, context=context)
 
     def register_factory(
-        self,
-        factory,
-        iface_or_type=Interface,
-        *,
-        context=None,
-        name=''
+        self, factory, iface_or_type=Interface, *, context=None, name=''
     ):
         """
         Register a service factory.
@@ -388,19 +365,11 @@ class ServiceRegistry:
 
         info = ServiceFactoryInfo(factory, iface, context_iface, wants_context)
         self.factories.register(
-            (IServiceFactory, context_iface),
-            iface,
-            name,
-            info,
+            (IServiceFactory, context_iface), iface, name, info
         )
 
     def register_singleton(
-        self,
-        service,
-        iface_or_type=Interface,
-        *,
-        context=None,
-        name=''
+        self, service, iface_or_type=Interface, *, context=None, name=''
     ):
         """
         Register a singleton instance.
@@ -415,10 +384,7 @@ class ServiceRegistry:
         """
         service_factory = SingletonServiceWrapper(service)
         return self.register_factory(
-            service_factory,
-            iface_or_type,
-            context=context,
-            name=name,
+            service_factory, iface_or_type, context=context, name=name
         )
 
     def find_factory(self, iface_or_type=Interface, *, context=None, name=''):
@@ -435,10 +401,7 @@ class ServiceRegistry:
         context_iface = _iface_for_context(context)
 
         svc_info = self.factories.lookup(
-            (IServiceFactory, context_iface),
-            iface,
-            name=name,
-            default=_marker,
+            (IServiceFactory, context_iface), iface, name=name, default=_marker
         )
         if svc_info is not _marker:
             return svc_info.factory
@@ -457,8 +420,7 @@ def _iface_for_type(obj):
     # make a new iface and cache it on the object
     name = obj.__name__
     iface = InterfaceClass(
-        '%s_IService' % name,
-        __doc__='service_factory generated interface',
+        '%s_IService' % name, __doc__='service_factory generated interface'
     )
     obj._service_iface = iface
     return iface
