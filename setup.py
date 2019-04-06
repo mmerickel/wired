@@ -17,10 +17,8 @@ tests_require = ['pytest', 'pytest-cov']
 
 setup(
     name='wired',
-    version='0.1.1',
     description='An inversion-of-control (IoC) container for building decoupled, configurable, pluggable applications.',
     version='0.1.2',
-    description='An inversion-of-control (IoC) container.',
     long_description=readme + '\n\n' + changes,
     author='Michael Merickel',
     author_email='pylons-discuss@googlegroups.com',
