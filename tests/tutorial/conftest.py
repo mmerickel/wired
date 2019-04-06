@@ -3,8 +3,8 @@ import sys
 
 import pytest
 
-pytestmark = pytest.mark.skipif(sys.version_info < (3, 7),
-                                reason="requires python3.7")
+if sys.version_info < (3, 7):
+    collect_ignore_glob = ['*.py']
 
 
 @pytest.fixture(scope="session", autouse=True)
