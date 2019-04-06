@@ -62,3 +62,5 @@ target/
 env27
 .idea
 cover
+
+bs-config.json
