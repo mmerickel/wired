@@ -24,7 +24,7 @@ tests_require = [
 setup(
     name='wired',
     version='0.1.1',
-    description='An inversion-of-control (IoC) container.',
+    description='An inversion-of-control (IoC) container for building decoupled, configurable, pluggable applications.',
     long_description=readme + '\n\n' + changes,
     author='Michael Merickel',
     author_email='pylons-discuss@googlegroups.com',

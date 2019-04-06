@@ -22,7 +22,6 @@ service as they are instantiated.
 `wired` aims to *scale down* to the simplest cases and *scale up* to very large,
 custom systems. It has one dependency and that dependency has one dependency.
 
-
 Installation
 ============
 
