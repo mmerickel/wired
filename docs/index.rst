@@ -2,7 +2,19 @@
 wired
 =====
 
-``wired`` is an implementation of an inversion of control (IoC) container and may be used as the core of a dependency injection (DI) framework or simply as a way to separate config-time from runtime for services in an application. It also provides caching such that a container maintains a local copy of each service as they are instantiated.
+*An inversion-of-control (IoC) container for building decoupled, extensible, configurable, pluggable applications.*
+
+Have a large application where you want to *decrease coupling* between components?
+Need to *supply configuration* to your application's various services?
+Want to make a *pluggable application* where others can supply services?
+
+`Inversion of Control <https://en.wikipedia.org/wiki/Inversion_of_control>`_ and `Dependency Injection <https://en.wikipedia.org/wiki/Dependency_injection>`_ are two patterns commonly used for these goals.
+
+``wired`` is an implementation of an inversion-of-control (IoC) container and may be used as the core of a dependency injection (DI) framework or simply as a way to separate config-time from runtime for services in an application.
+It also provides caching such that a container maintains a local copy of each service as they are instantiated.
+
+`wired` aims to *scale down* to the simplest cases and *scale up* to very large, custom systems.
+It has one dependency and that dependency has one dependency.
 
 Installation
 ============
@@ -39,121 +51,72 @@ Once you have a copy of the source, you can install it with:
 
 .. _Github repo: https://github.com/mmerickel/wired
 
-Usage
-=====
+Quick Usage
+===========
 
-The basic workflow is:
+Imagine an application where customers walk in the door and you want to greet them with a Greeter. This application is simple: there's only one Greeter.
 
-1. Create a :class:`wired.ServiceRegistry` containing service factories and service singletons.
+To do this, we:
 
-2. Invoke :meth:`wired.ServiceRegistry.create_container` per logical operation to create a :class:`wired.ServiceContainer` object.
+- Setup the application: make a "registry" and register some things (a "singleton" to hold the ``Greeter``)
 
-3. Invoke :meth:`wired.ServiceContainer.get` as necessary to get a service instance conforming to the desired name/interface.
+- Start processing requests (greet someone) by getting stuff we need to process the request
 
-::
+- "Get stuff we need" by asking *the system* for what we need (a ``Greeter``)
 
-                                                 ┌───────────────────────┐
-                                                 │                       │
-                                      ┌──────────│    ServiceContainer   │
-                                      │          │                       │
-                                      │          └───────────────────────┘
-                                      │
-  ┌──────────────────────┐            │                     ■
-  │                      │            │
-  │    ServiceRegistry   │<───────────┤                     ■
-  │                      │            │
-  └──────────────────────┘            │                     ■
-                                      │
-                                      │          ┌───────────────────────┐
-                                      │          │                       │
-                                      └──────────│    ServiceContainer   │
-                                                 │                       │
-                                                 └───────────────────────┘
-
-Registering services
---------------------
-
-Service singletons and factories can be registered by type or by name. It is recommended to register them by type to avoid naming clashes. Two services registered for ``name='login'`` would clash and it would be unclear what each one is. However, a service factory that is registered to provide instances of the ``LoginService`` class are unambiguous. Anyone else registering such a service factory is directly competing for control of that type. It is possible to register for both type and name.
-
-Service factories accept one argument, a :class:`wired.ServiceContainer` instance. The container may be used to get any dependencies required to create the service and return it from the factory. The service is then cached on the container, available for any other factories or code to get.
-
-Example
-~~~~~~~
+For a deeper dive, try :doc:`the tutorial <./tutorial/index>`.
 
 .. code-block:: python
 
-      from wired import ServiceRegistry
+    from wired import ServiceRegistry
 
-      def create_service_registry(settings):
-          registry = ServiceRegistry()
 
-          engine = engine_from_config(settings)
-          registry.register_singleton(engine, name='dbengine')
+    class Greeter:
+        def __init__(self, greeting):
+            self.greeting = greeting
 
-          def dbsession_factory(container):
-              engine = container.get(name='dbengine')
-              return Session(bind=engine)
-          registry.register_factory(dbsession_factory, name='dbsession')
+        def __call__(self):
+            return f'{self.greeting} !!'
 
-          def login_factory(container):
-              dbsession = container.get(name='dbsession')
-              return LoginService(dbsession)
-          registry.register_factory(login_factory, LoginService)
 
-          return registry
+    def app_setup():
+        # Make the application's registry
+        registry = ServiceRegistry()
 
-      settings = ...
-      registry = create_service_registry(settings)
+        # Greeters are nice...they greet people!
+        greeter = Greeter(greeting='Hello')
 
-Context-sensitive services
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # Register it as a singleton using its class for the "key"
+        registry.register_singleton(greeter, Greeter)
 
-A unique feature of ``wired`` is that different service factories/singletons can be registered for the same type/name. The appropriate one is selected by registering the service with a ``context`` argument that constrains the types of context required. At lookup-time a container is bound to a particular context and will affect which service factory is invoked.
+        return registry
 
-Services are cached per-context instance (by object identity) and their factories can use the instance, defined as ``container.context`` as necessary.
 
-By default, services are registered with ``context=None``, indicating that the service does not care and will not use the context. In this case, the same instance will be cached and returned for any context.
+    def greet_a_customer(container):
 
-Using services
---------------
+        # Get the registered greeter, do the greeting
+        the_greeter = container.get(Greeter)
+        greeting = the_greeter()
 
-The application / codebase, ideally, should define a single registry which is considered read-only and threadsafe. Later, per-logical operation (such as a web request, or worker job, or thread, etc) a new :class:`wired.ServiceContainer` should be created. The container can be used to create services required to complete the operation without concern for the exactly service implementation defined in the registry.
+        return greeting
 
-Example
-~~~~~~~
 
-.. code-block:: python
+    def main():
+        # Setup the application
+        registry = app_setup()
 
-      container = registry.create_container()
+        # A customer comes in, handle the steps in the greeting process
+        # as a "container".
+        container = registry.create_container()
+        greeting = greet_a_customer(container)
 
-      login_svc = container.get(LoginService)
-      user = container.get(IUser, context=request.context)
-      auth_token = login_svc.get_auth_token(user)
+        # The "request" was handled, return it
+        print(greeting)
 
-Binding to a context
-~~~~~~~~~~~~~~~~~~~~
 
-Container objects are thin wrappers around a service cache and it's possible to create more than one at a time, each bound to a different context in order to simplify calls to :meth:`wired.ServiceContainer.get`. Bound containers are created automatically when invoking service factories if a ``context`` is passed to ``container.get(..., context=...)``. Alternatively, bind a container manually for reuse via :meth:`wired.ServiceContainer.bind`. Using a bound container, all calls to ``.get`` will, by default, use the bound context.
+    if __name__ == '__main__':
+        main()
 
-Any factories registered for ``context=None`` (which is the default registration) will not be affected by any of this and will always receive a ``container.context`` value of ``None``.
-
-Injecting services into a container manually
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Sometimes a service factory cannot easily be defined globally. Rather, per-container there may be some services that can be registered, defined by the logical operation.
-
-For example, imagine binding the web request itself as a service, or the active user:
-
-.. code-block:: python
-
-    container = registry.create_container()
-
-    container.set(request, IRequest)
-    container.set(request.user, IUser)
-
-    # later ...
-
-    user = container.get(IUser)
 
 More Information
 ================
@@ -161,6 +124,8 @@ More Information
 .. toctree::
    :maxdepth: 1
 
+   usage
+   tutorial/index
    api
    changes
 
