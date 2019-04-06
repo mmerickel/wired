@@ -3,7 +3,7 @@ import sys
 
 import pytest
 
-if sys.version_info < (3, 7):
+if sys.version_info < (3, 7):  # pragma: no cover
     collect_ignore_glob = ['*.py']
 
 
