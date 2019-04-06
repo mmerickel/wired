@@ -17,15 +17,15 @@ Code
 ``__init__.py``
 ---------------
 
-.. literalinclude:: ../../src/wired/samples/overrides/__init__.py
+.. literalinclude:: __init__.py
 
 ``custom.py``
 -------------
 
-.. literalinclude:: ../../src/wired/samples/overrides/custom.py
+.. literalinclude:: custom.py
 
 
 ``models.py``
 -------------
 
-.. literalinclude:: ../../src/wired/samples/overrides/models.py
+.. literalinclude:: models.py

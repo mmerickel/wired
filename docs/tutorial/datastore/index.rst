@@ -32,9 +32,9 @@ Code
 ``__init__.py``
 ---------------
 
-.. literalinclude:: ../../src/wired/samples/datastore/__init__.py
+.. literalinclude:: __init__.py
 
 ``custom.py``
 -------------
 
-.. literalinclude:: ../../src/wired/samples/datastore/custom.py
+.. literalinclude:: custom.py

@@ -6,8 +6,8 @@ French Greeter.
 """
 from dataclasses import dataclass
 
-from wired import ServiceRegistry, ServiceContainer
-from wired.samples.datastore import Customer, Greeter, Settings, Datastore
+from wired import ServiceRegistry
+from . import Customer, Greeter, Settings
 
 
 @dataclass
@@ -33,9 +33,3 @@ def setup(registry: ServiceRegistry, settings: Settings):
     registry.register_factory(
         french_greeter_factory, Greeter, context=FrenchCustomer
     )
-
-    # Grab the Datastore and add a FrenchCustomer
-    container: ServiceContainer = registry.create_container()
-    datastore: Datastore = container.get(Datastore)
-    customer1 = FrenchCustomer(name='Henri')
-    datastore.customers.append(customer1)

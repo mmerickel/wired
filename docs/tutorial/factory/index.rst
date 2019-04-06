@@ -20,5 +20,5 @@ Changes
 Code
 ====
 
-.. literalinclude:: ../../src/wired/samples/factory.py
+.. literalinclude:: app.py
 

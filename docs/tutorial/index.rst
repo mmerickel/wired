@@ -34,11 +34,11 @@ Tutorial Steps
 .. toctree::
    :maxdepth: 1
 
-   simple
-   factory
-   settings
-   context
-   decoupled
-   datastore
-   overrides
-   requests_views
+   simple/index
+   factory/index
+   settings/index
+   context/index
+   decoupled/index
+   datastore/index
+   overrides/index
+   requests_views/index

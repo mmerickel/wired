@@ -19,10 +19,34 @@ Simple wired application:
 - A Datastore which stores/retrieves instances of Customers
 
 """
+from dataclasses import dataclass, field
 from typing import List
 
 from wired import ServiceRegistry, ServiceContainer
-from .models import Customer, Datastore, Greeter, Settings
+
+
+@dataclass
+class Customer:
+    name: str
+
+
+@dataclass
+class Datastore:
+    customers: List[Customer] = field(default_factory=list)
+
+
+@dataclass
+class Settings:
+    punctuation: str
+
+
+@dataclass
+class Greeter:
+    punctuation: str
+    greeting: str = 'Hello'
+
+    def __call__(self, customer: Customer) -> str:
+        return f'{self.greeting} {customer.name} {self.punctuation}'
 
 
 def setup(registry: ServiceRegistry, settings: Settings):
@@ -56,7 +80,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     setup(registry, settings)
 
     # Import the add-on and initialize it
-    from wired.samples.overrides.custom import setup as addon_setup
+    from .custom import setup as addon_setup
     addon_setup(registry, settings)
 
     return registry

@@ -29,15 +29,15 @@ Code
 ``__init__.py``
 ---------------
 
-.. literalinclude:: ../../src/wired/samples/requests_views/__init__.py
+.. literalinclude:: __init__.py
 
 ``custom.py``
 -------------
 
-.. literalinclude:: ../../src/wired/samples/requests_views/custom.py
+.. literalinclude:: custom.py
 
 
 ``models.py``
 -------------
 
-.. literalinclude:: ../../src/wired/samples/requests_views/models.py
+.. literalinclude:: models.py

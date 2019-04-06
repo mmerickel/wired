@@ -57,7 +57,7 @@ def setup(settings: Settings) -> ServiceRegistry:
     registry.register_factory(default_greeter_factory, Greeter)
 
     # Import the add-on and initialize it
-    from wired.samples.decoupled.custom import setup
+    from .custom import setup
     setup(registry, settings)
 
     return registry
@@ -89,7 +89,7 @@ def main():
     # *** French Customer
     # Make a FrenchCustomer, pass into the "greet_customer" interaction,
     # then test the result.
-    from wired.samples.decoupled.custom import FrenchCustomer
+    from .custom import FrenchCustomer
     french_customer = FrenchCustomer(name='Henri')
     assert 'Bonjour Henri !!' == greet_customer(registry, french_customer)
 

@@ -24,7 +24,7 @@ Simple wired application:
 from typing import List
 
 from wired import ServiceRegistry
-from wired.samples.requests_views.models import (
+from .models import (
     Customer, Datastore, Greeter, Resource, Request, Settings, Url, View
 )
 
@@ -37,7 +37,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     setup(registry, settings)
 
     # Import the add-on and initialize it
-    from wired.samples.requests_views.custom import setup as addon_setup
+    from .custom import setup as addon_setup
     addon_setup(registry, settings)
 
     return registry

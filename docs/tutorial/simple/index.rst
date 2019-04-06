@@ -23,4 +23,4 @@ Meaning, your application is responsible for making a registry, making a contain
 Code
 ====
 
-.. literalinclude:: ../../src/wired/samples/simple.py
+.. literalinclude:: app.py

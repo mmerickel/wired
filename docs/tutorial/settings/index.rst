@@ -11,5 +11,5 @@ We'll see in a later example why it is useful to have decoupled, arms-length con
 Code
 ====
 
-.. literalinclude:: ../../src/wired/samples/settings.py
+.. literalinclude:: app.py
 

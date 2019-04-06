@@ -23,5 +23,5 @@ We also pass the Customer into the ``Greeter.__call__`` to let the Greeter greet
 Code
 ====
 
-.. literalinclude:: ../../src/wired/samples/context.py
+.. literalinclude:: app.py
 

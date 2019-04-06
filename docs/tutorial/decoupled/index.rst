@@ -26,9 +26,9 @@ Code
 ``__init__.py``
 ---------------
 
-.. literalinclude:: ../../src/wired/samples/decoupled/__init__.py
+.. literalinclude:: __init__.py
 
 ``custom.py``
 -------------
 
-.. literalinclude:: ../../src/wired/samples/decoupled/custom.py
+.. literalinclude:: custom.py
