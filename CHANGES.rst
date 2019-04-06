@@ -2,7 +2,7 @@ Unreleased
 ==========
 
 - Edit docs to (a) improve sales pitch, (b) split into a couple of sub-pages,
-  and (c) provide a tutorial. Update README and ``setuup.py`` description a
+  and (c) provide a tutorial. Update README and ``setup.py`` description a
   bit as well.
 
 0.1.2 (2019-03-23)
