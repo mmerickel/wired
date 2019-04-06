@@ -1,5 +1,3 @@
-import sys
-
 import pytest
 
 from wired import ServiceRegistry
@@ -19,8 +17,6 @@ def registry(settings):
     return r
 
 
-@pytest.mark.skipif(sys.version_info < (3, 7),
-                    reason="requires python3.3")
 def test_sample_interactions(registry):
     # Integration-style test
 
