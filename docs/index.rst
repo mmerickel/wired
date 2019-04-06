@@ -2,8 +2,8 @@
 wired
 =====
 
-*An inversion-of-control (IoC) container for building decoupled, configurable,
-pluggable applications.*
+*An inversion-of-control (IoC) container for building decoupled, extensible,
+configurable, pluggable applications.*
 
 Have a large application where you want to *decrease coupling* between components?
 Need to *supply configuration* to your application's various services? Want to
@@ -134,6 +134,7 @@ More Information
    :maxdepth: 1
 
    usage
+   tutorial/index
    api
    changes
 
