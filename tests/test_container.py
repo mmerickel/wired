@@ -47,36 +47,32 @@ class DummyFactory:
 @pytest.fixture
 def registry():
     from wired import ServiceRegistry
+
     return ServiceRegistry()
 
 
 def test_sentinel_repr():
     from wired.container import _marker
+
     assert str(_marker) == '<default>'
 
 
-@pytest.mark.parametrize('iface', [
-    Interface,
-    IFooService,
-    DummyService,
-])
-@pytest.mark.parametrize('name', [
-    '',
-    'foo',
-])
-@pytest.mark.parametrize('contexts', [
-    (None, None),
-    (None, ContextA()),  # fallback to None lookup
-    (ContextA, ContextA()),
-    (IContextInterface, ContextWithInterface()),
-    pytest.param((IContextInterface, ContextA()), marks=pytest.mark.xfail),
-])
+@pytest.mark.parametrize('iface', [Interface, IFooService, DummyService])
+@pytest.mark.parametrize('name', ['', 'foo'])
+@pytest.mark.parametrize(
+    'contexts',
+    [
+        (None, None),
+        (None, ContextA()),  # fallback to None lookup
+        (ContextA, ContextA()),
+        (IContextInterface, ContextWithInterface()),
+        pytest.param((IContextInterface, ContextA()), marks=pytest.mark.xfail),
+    ],
+)
 def test_various_params(registry, iface, contexts, name):
     context_iface, context_obj = contexts
     factory = DummyFactory()
-    registry.register_factory(
-        factory, iface, context=context_iface, name=name,
-    )
+    registry.register_factory(factory, iface, context=context_iface, name=name)
     c = registry.create_container()
     assert c.get(iface, context=context_obj, name=name) is factory.result
     assert c.get(iface, context=context_obj, name=name) is factory.result
@@ -137,17 +133,22 @@ def test_different_contexts_in_nested_lookup(registry):
 
     def admin_roles_factory(_):
         return AdminRoles()
+
     registry.register_factory(
-        admin_roles_factory, UserRoles, context=AdminArea)
+        admin_roles_factory, UserRoles, context=AdminArea
+    )
 
     def default_roles_factory(_):
         return DefaultRoles()
+
     registry.register_factory(
-        default_roles_factory, UserRoles, context=DefaultArea)
+        default_roles_factory, UserRoles, context=DefaultArea
+    )
 
     def user_factory(container):
         roles = container.get(UserRoles)
         return User(roles)
+
     registry.register_factory(user_factory, User, context=Interface)
 
     c = registry.create_container()
@@ -203,3 +204,16 @@ def test_unregistered_lookup(registry):
     with pytest.raises(LookupError):
         c.get(IBarService)  # IFooService is not specific enough
     assert c.get(IBarService, default=marker) is marker
+
+
+def test_unique_class_objects_with_same_name_dont_conflict(registry):
+    def make_class():
+        class Greeter:
+            pass
+
+        return Greeter
+
+    ClassA = make_class()
+    ClassB = make_class()
+    registry.register_singleton(ClassA(), ClassA)
+    assert registry.find_factory(ClassB) is None
