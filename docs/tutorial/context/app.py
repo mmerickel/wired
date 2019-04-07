@@ -87,8 +87,8 @@ def greet_customer(registry: ServiceRegistry, customer: Customer) -> str:
 
     # Get a Greeter using the customer as context. Use the Customer when
     # generating the greeting.
-    default_greeter: Greeter = container.get(Greeter, context=customer)
-    greeting = default_greeter(customer)
+    greeter: Greeter = container.get(Greeter, context=customer)
+    greeting = greeter(customer)
 
     return greeting
 
