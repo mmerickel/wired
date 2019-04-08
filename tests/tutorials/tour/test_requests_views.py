@@ -5,7 +5,7 @@ from wired import ServiceRegistry
 
 @pytest.fixture
 def settings():
-    from tour.requests_views import Settings
+    from tour.requests_views.models import Settings
 
     settings = Settings(punctuation='!!')
     return settings
