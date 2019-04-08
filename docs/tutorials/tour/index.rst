@@ -1,6 +1,6 @@
-========
-Tutorial
-========
+=============
+Tour of Wired
+=============
 
 Let's write a ``wired`` application using inversion of control (IoC).
 

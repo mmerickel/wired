@@ -64,7 +64,7 @@ To do this, we:
 
 - "Get stuff we need" by asking *the system* for what we need (a ``Greeter``)
 
-For a deeper dive, try :doc:`the tutorial <./tutorial/index>`.
+For a deeper introduction, try :doc:`the Tour of Wired tutorial <./tutorials/tour/index>`.
 
 .. code-block:: python
 
@@ -125,7 +125,7 @@ More Information
    :maxdepth: 1
 
    usage
-   tutorial/index
+   tutorials/index
    api
    changes
 
