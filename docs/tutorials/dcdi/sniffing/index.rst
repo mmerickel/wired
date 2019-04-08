@@ -1,6 +1,6 @@
-========
-Sniffing
-========
+===============================
+Getting Fields by Type Sniffing
+===============================
 
 We're doing dependency injection, but the app-builders consuming our application have to manually get stuff from the registry.
 Let's look at a pattern like Angular, where constructors put types on their arguments and "the system" finds the right object to pass in.

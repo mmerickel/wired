@@ -67,3 +67,5 @@ Tutorial Steps
     :maxdepth: 1
 
     sniffing/index
+    attributes/index
+    decorators/index
