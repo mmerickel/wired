@@ -194,7 +194,8 @@ class ServiceContainer:
                is found, return it directly.
 
             2. If no instance is found, search for the factory on the registry.
-               If one is not found, raise a ``LookupError``.
+               If one is not found, raise a ``LookupError`` or, if provided,
+               return ``default``.
 
             3. Instiantiate the factory, caching the result in the container.
 
@@ -204,6 +205,7 @@ class ServiceContainer:
             influence which factories are matched. Defaults to the bound
             :attr:`.context` on the container.
         :param str name: The registered name of the service.
+        :param default: A service instance to return if lookup fails.
 
         """
         if context is not _marker and context is not self.context:
