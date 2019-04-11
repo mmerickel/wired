@@ -13,11 +13,15 @@ from .utils import register_dataclass
 
 @dataclass
 class FrenchCustomer(Customer):
+    """ A custom kind of Customer """
+
     pass
 
 
 @dataclass
 class FrenchGreeter(Greeter):
+    """ A customer kind of Greeter """
+
     greeting: str = 'Bonjour'
 
 

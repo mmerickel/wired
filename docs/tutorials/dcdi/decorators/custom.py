@@ -16,12 +16,16 @@ from .utils import injected
 
 @dataclass(frozen=True)
 class FrenchCustomer(Customer):
+    """ A custom kind of Customer """
+
     pass
 
 
 @factory(for_=Greeter, context=FrenchCustomer)
 @dataclass(frozen=True)
 class FrenchGreeter(Greeter):
+    """ A customer kind of Greeter """
+
     greeting: str = 'Bonjour'
 
 

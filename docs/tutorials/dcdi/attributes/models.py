@@ -19,11 +19,15 @@ from .utils import injected
 
 @dataclass(frozen=True)
 class Url:
+    """ Make it easy to get the currently-processed url """
+
     value: str
 
 
 @dataclass(frozen=True)
 class Resource:
+    """ Base type for the business objects in the system """
+
     name: str
     title: str
 
@@ -39,33 +43,45 @@ class Resource:
 
 @dataclass(frozen=True)
 class Customer(Resource):
+    """ A Customer resource in the system """
+
     pass
 
 
 @dataclass(frozen=True)
 class Datastore:
+    """ Persistent storage of resources """
+
     customers: Dict[str, Customer] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
 class Settings:
+    """ Configuration that a site using this app can customize and adjust """
+
     punctuation: str
 
 
 @dataclass(frozen=True)
 class Request:
+    """ Information specific to the currently-processed operation """
+
     container: ServiceContainer
     url: str = injected(Url, attr='value')
 
 
 @dataclass(frozen=True)
 class Greeter:
+    """ The person that greets a customer """
+
     punctuation: str = injected(Settings, attr='punctuation')
     greeting: str = 'Hello'
 
 
 @dataclass(frozen=True)
 class View:
+    """ Everything needed to process the interaction for current request """
+
     url: str = injected(Request, attr='url')
     customer_title: str = injected(Resource, attr='title')
     greeting: str = injected(Greeter, attr='greeting')
