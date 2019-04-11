@@ -126,6 +126,7 @@ More Information
 
    usage
    tutorial/index
+   dataclasses/index
    api
    changes
 
