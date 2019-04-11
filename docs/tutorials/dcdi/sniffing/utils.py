@@ -1,8 +1,7 @@
 from typing import get_type_hints
 
 from wired import ServiceRegistry, ServiceContainer
-
-from .models import Request, View, Url
+from .models import View, Url
 
 
 def process_request(registry: ServiceRegistry, url: str) -> str:
@@ -13,9 +12,6 @@ def process_request(registry: ServiceRegistry, url: str) -> str:
 
     # Put the url into the container
     container.set(url, Url)
-
-    # Create a Request using the factory
-    request = container.get(Request)
 
     # Create a View to generate the greeting
     view = container.get(View)

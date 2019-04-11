@@ -7,7 +7,7 @@ from wired import ServiceRegistry, ServiceContainer
 def process_request(registry: ServiceRegistry, url_value: str) -> str:
     """ Given URL (customer name), make a Request to handle interaction """
 
-    from .models import Request, View, Url
+    from .models import View, Url
 
     # Make the container that this request gets processed in
     container = registry.create_container()
@@ -15,9 +15,6 @@ def process_request(registry: ServiceRegistry, url_value: str) -> str:
     # Put the url into the container
     url = Url(value=url_value)
     container.set(url, Url)
-
-    # Create a Request using the factory
-    request = container.get(Request)
 
     # Create a View to generate the greeting
     view = container.get(View)
