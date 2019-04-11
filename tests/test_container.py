@@ -217,3 +217,29 @@ def test_unique_class_objects_with_same_name_dont_conflict(registry):
     ClassB = make_class()
     registry.register_singleton(ClassA(), ClassA)
     assert registry.find_factory(ClassB) is None
+
+
+def test_cache_context(registry):
+    class ContextB:
+        pass
+
+    class DummyFactoryA(DummyFactory):
+        pass
+
+    class DummyFactoryB(DummyFactory):
+        pass
+
+    context_a = ContextA()
+    context_b = ContextB()
+    factory_a = DummyFactoryA()
+    factory_b = DummyFactoryB()
+
+    registry.register_factory(factory_a, DummyFactory)
+    # registry.register_factory(factory_a, DummyFactory, context=ContextA)
+    registry.register_factory(factory_b, DummyFactory, context=ContextB)
+
+    container = registry.create_container()
+    # assert container.get(DummyFactory, context=context_b) is factory_b.result  # this one is passing
+    assert container.get(DummyFactory) is factory_a.result
+    assert container.get(DummyFactory, context=context_a) is factory_a.result
+    assert container.get(DummyFactory, context=context_b) is factory_b.result
