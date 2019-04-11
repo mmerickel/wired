@@ -22,7 +22,6 @@ class FrenchGreeter(Greeter):
 
 
 def setup(registry: ServiceRegistry, container: ServiceContainer):
-
     register_dataclass(
         registry, container,
         FrenchGreeter, Greeter,
@@ -30,7 +29,6 @@ def setup(registry: ServiceRegistry, container: ServiceContainer):
     )
 
     # Grab the Datastore and add a FrenchCustomer
-    container: ServiceContainer = registry.create_container()
     datastore: Datastore = container.get(Datastore)
     henri = FrenchCustomer(name='henri', title='Henri')
     datastore.customers['henri'] = henri

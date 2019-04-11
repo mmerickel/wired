@@ -7,7 +7,6 @@ French Greeter.
 from dataclasses import dataclass
 
 from wired import ServiceRegistry, ServiceContainer
-
 from .decorators import factory
 from .models import (
     Customer, Greeter, Request, Resource, Datastore, Settings, View,
@@ -40,7 +39,6 @@ class FrenchView:
 
 def setup(registry: ServiceRegistry, container: ServiceContainer):
     # Grab the Datastore and add a FrenchCustomer
-    container: ServiceContainer = registry.create_container()
     datastore: Datastore = container.get(Datastore)
     henri = FrenchCustomer(name='henri', title='Henri')
     datastore.customers['henri'] = henri
