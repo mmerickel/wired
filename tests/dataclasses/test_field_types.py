@@ -1,6 +1,6 @@
 import pytest
 
-from wired.dataclasses.field_types import injected, InjectedArgumentException
+from wired.dataclasses import injected, InjectedArgumentException
 
 
 class BogusResource:

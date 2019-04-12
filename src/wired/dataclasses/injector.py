@@ -3,10 +3,7 @@ from typing import get_type_hints, Optional, Tuple
 
 from wired import ServiceContainer
 
-
-class Context:
-    """ Marker interface for lookups by request context """
-    pass
+from wired.dataclasses.models import Context
 
 
 @dataclass()

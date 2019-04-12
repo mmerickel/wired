@@ -3,8 +3,7 @@ from typing import Optional
 
 import pytest
 from wired import ServiceRegistry, ServiceContainer
-from wired.dataclasses.field_types import injected
-from wired.dataclasses.injector import Injector, Context
+from wired.dataclasses import injected, Injector, Context
 
 
 class Source:
