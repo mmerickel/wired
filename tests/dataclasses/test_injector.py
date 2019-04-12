@@ -25,7 +25,7 @@ def empty_container(monkeypatch):
         Context: Context(),
     }
 
-    def d_get(key):
+    def d_get(key, context=None):
         if key not in d:
             raise LookupError()
         return d.get(key)
@@ -45,6 +45,9 @@ def container(monkeypatch):
     }
 
     def d_get(key, context=None):
+        if key is str:
+            # For the purposes of testing primitive types
+            raise TypeError()
         if key not in d:
             raise LookupError()
         return d.get(key)
@@ -79,8 +82,9 @@ def test_no_registrations(empty_container):
         target: Source
 
     injector = Injector(container=empty_container)
-    result: Dummy = injector(Dummy)
-    assert 9 == result
+    with pytest.raises(LookupError) as exc:
+        result: Dummy = injector(Dummy)
+    assert 'Injector failed for target on Dummy' in str(exc.value)
 
 
 def test_wrong_registration(container):
@@ -91,9 +95,34 @@ def test_wrong_registration(container):
         target: WrongSource
 
     injector = Injector(container=container)
-    with pytest.raises(TypeError) as exc:
+    with pytest.raises(LookupError) as exc:
         result: Dummy = injector(Dummy)
-    assert 'missing 1 required positional argument' in str(exc.value)
+    assert 'Injector failed for target on Dummy' in str(exc.value)
+
+
+def test_fail_primitive_value_no_default(container):
+    # Type is str but you don't put primitive values in registry
+
+    @dataclass
+    class Dummy:
+        target: str
+
+    injector = Injector(container=container)
+    with pytest.raises(LookupError) as exc:
+        result: Dummy = injector(Dummy)
+    assert 'No default value on field target' in str(exc.value)
+
+
+def test_primitive_value_with_default(container):
+    # Type is str but you don't put primitive values in registry
+
+    @dataclass
+    class Dummy:
+        target: str = 'Dummy Target'
+
+    injector = Injector(container=container)
+    result: Dummy = injector(Dummy)
+    assert 'Dummy Target' == result.target
 
 
 def test_nothing_needed(empty_container):

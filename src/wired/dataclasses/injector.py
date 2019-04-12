@@ -1,4 +1,4 @@
-from dataclasses import dataclass, fields, Field
+from dataclasses import dataclass, fields, Field, MISSING
 from typing import get_type_hints, Optional, Tuple
 
 from wired import ServiceContainer
@@ -77,11 +77,12 @@ class Injector:
                 # We will use that to our advantage to look for a dataclass
                 # field default value.
                 field_default = getattr(full_field, 'default', None)
-                if field_default:
+                if field_default is not MISSING:
                     args[field_name] = field_default
                     continue
                 else:
-                    raise LookupError()
+                    msg = f'No default value on field {field_name}'
+                    raise LookupError(msg)
             except LookupError:
                 # Give up and work around ``wired`` unhelpful exception
                 # by adding some context information.
