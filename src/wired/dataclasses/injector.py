@@ -86,8 +86,13 @@ class Injector:
             except LookupError:
                 # Give up and work around ``wired`` unhelpful exception
                 # by adding some context information.
-                msg = f'Injector failed for {field_name} on {target.__name__}'
-                raise LookupError(msg)
+
+                # Note that a dataclass with a ``__post_init__`` might still
+                # do some construction. Only do this next part if there's
+                # no __post_init__
+                if not hasattr(target, '__post_init__'):
+                    msg = f'Injector failed for {field_name} on {target.__name__}'
+                    raise LookupError(msg)
 
         # Now construct an instance of the target dataclass
         return target(**args)
