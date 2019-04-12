@@ -23,7 +23,7 @@ def register_dataclass(
         # Use a generic dataclass factory
         def dataclass_factory(c: ServiceContainer):
             injector = Injector(container=c)
-            instance = Injector(target, context=context)
+            instance = injector(target, context=context)
             return instance
 
     registry.register_factory(dataclass_factory, for_, context=context)
