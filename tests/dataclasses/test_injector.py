@@ -22,6 +22,11 @@ class Url:
     pass
 
 
+@dataclass
+class DummyContext(Context):
+    name: str = 'dummy_context'
+
+
 @pytest.fixture
 def container():
     registry = ServiceRegistry()
@@ -29,12 +34,17 @@ def container():
     return container
 
 
+@pytest.fixture
+def dummy_context():
+    return DummyContext()
+
+
 def test_service_construction(container):
     inj = Injector(container=container)
     assert container == inj.container
 
 
-def test_basic_dataclass(monkeypatch, container):
+def test_basic_dataclass(monkeypatch, container, dummy_context):
     # Put something in the container
 
     @dataclass
@@ -46,7 +56,7 @@ def test_basic_dataclass(monkeypatch, container):
 
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
-    result = inj(Dummy)
+    result = inj(Dummy, context=dummy_context)
     assert 'source' == result.target.name
 
 
@@ -84,62 +94,49 @@ def test_wrong_registration(monkeypatch, container):
     assert 'Injector failed for target on Dummy' in str(exc.value)
 
 
-def test_fail_primitive_value_no_default(monkeypatch, container):
+def test_fail_primitive_value_no_default(monkeypatch, container,
+                                         dummy_context):
     # Type is str but you don't put primitive values in registry
 
     @dataclass
     class Dummy:
         target: str
 
-    def d_get(key, context=None):
-        if key is Context:
-            return Context()
+    def d_get(key):
         raise TypeError()
 
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
     with pytest.raises(LookupError) as exc:
-        result: Dummy = inj(Dummy)
+        result: Dummy = inj(Dummy, context=dummy_context)
     assert 'No default value on field target' in str(exc.value)
 
 
-def test_primitive_value_with_default(monkeypatch, container):
+def test_primitive_value_with_default(container, dummy_context):
     # Type is str but you don't put primitive values in registry
 
     @dataclass
     class Dummy:
         target: str = 'Dummy Target'
 
-    def d_get(key, context=None):
-        if key is Context:
-            return Context()
-        raise TypeError()
-
-    monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
+    result: Dummy = inj(Dummy, context=dummy_context)
     assert 'Dummy Target' == result.target
 
 
-def test_nothing_needed(monkeypatch, container):
+def test_nothing_needed(container, dummy_context):
     # Our dataclass doesn't want anything
 
     @dataclass
     class Dummy:
         pass
 
-    def d_get(key, context=None):
-        if key is Context:
-            return Context()
-        raise TypeError()
-
-    monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
+    result: Dummy = inj(Dummy, context=dummy_context)
     assert Dummy == result.__class__
 
 
-def test_singleton(monkeypatch, container):
+def test_singleton(monkeypatch, container, dummy_context):
     # A singleton is also registered, use it
 
     @dataclass
@@ -148,8 +145,6 @@ def test_singleton(monkeypatch, container):
         singleton: Singleton
 
     def d_get(key, context=None):
-        if key is Context:
-            return Context()
         if key is Singleton:
             return Singleton()
         if key is Source:
@@ -158,30 +153,56 @@ def test_singleton(monkeypatch, container):
 
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
+    result: Dummy = inj(Dummy, context=dummy_context)
     assert 'source' == result.target.name
     assert 'singleton' == result.singleton.name
 
 
-def test_container(monkeypatch, container):
+def test_container(container, dummy_context):
     # Target wants to grab the container itself
 
     @dataclass
     class Dummy:
         container: ServiceContainer
 
+    inj = Injector(container=container)
+    result: Dummy = inj(Dummy, context=dummy_context)
+    assert container == result.container
+
+
+def test_injected_context(monkeypatch, container, dummy_context):
+    # Return the context from the container instead of passing
+    # it in.
+
+    @dataclass
+    class Dummy:
+        context: Context
+
     def d_get(key, context=None):
         if key is Context:
-            return Context()
+            return dummy_context
         raise TypeError()
 
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
     result: Dummy = inj(Dummy)
-    assert container == result.container
+    assert 'dummy_context' == getattr(result.context, 'name')
 
 
-def test_container_post_init(monkeypatch, container):
+def test_manual_ontext(container, dummy_context):
+    # Manually pass the context to the injector call, instead
+    # relying on the injector to lookup the Context in the container.
+
+    @dataclass
+    class Dummy:
+        context: Context
+
+    inj = Injector(container=container)
+    result: Dummy = inj(Dummy, context=dummy_context)
+    assert 'dummy_context' == getattr(result.context, 'name')
+
+
+def test_container_post_init(monkeypatch, container, dummy_context):
     # Use dataclass post init to get something out of the
     # container
 
@@ -194,19 +215,17 @@ def test_container_post_init(monkeypatch, container):
             self.url = self.container.get(Url)
 
     def d_get(key, context=None):
-        if key is Context:
-            return Context()
         if key is Url:
             return Url()
         raise TypeError()
 
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
+    result: Dummy = inj(Dummy, context=dummy_context)
     assert container == result.container
 
 
-def test_injected_field(monkeypatch, container):
+def test_injected_field(monkeypatch, container, dummy_context):
     # Using the injected field
 
     @dataclass
@@ -214,19 +233,17 @@ def test_injected_field(monkeypatch, container):
         target: Source = injected(Source)
 
     def d_get(key, context=None):
-        if key is Context:
-            return Context()
         if key is Source:
             return Source()
         raise TypeError()
 
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
+    result: Dummy = inj(Dummy, context=dummy_context)
     assert 'source' == result.target.name
 
 
-def test_injected_field_with_attr(monkeypatch, container):
+def test_injected_field_with_attr(monkeypatch, container, dummy_context):
     # Using the injected field
 
     @dataclass
@@ -234,19 +251,17 @@ def test_injected_field_with_attr(monkeypatch, container):
         target: str = injected(Source, attr='name')
 
     def d_get(key, context=None):
-        if key is Context:
-            return Context()
         if key is Source:
             return Source()
         raise TypeError()
 
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
+    result: Dummy = inj(Dummy, context=dummy_context)
     assert 'source' == result.target
 
 
-def test_injected_field_missing_attr(monkeypatch, container):
+def test_injected_field_missing_attr(monkeypatch, container, dummy_context):
     # Using the injected field
 
     @dataclass
@@ -254,8 +269,6 @@ def test_injected_field_missing_attr(monkeypatch, container):
         target: str = injected(Source, attr='XXX')
 
     def d_get(key, context=None):
-        if key is Context:
-            return Context()
         if key is Source:
             return Source()
         raise TypeError()
@@ -263,5 +276,5 @@ def test_injected_field_missing_attr(monkeypatch, container):
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
     with pytest.raises(AttributeError) as exc:
-        result: Dummy = inj(Dummy)
+        result: Dummy = inj(Dummy, context=dummy_context)
     assert 'XXX' in str(exc.value)

@@ -14,6 +14,7 @@ class Injector:
     def __call__(self,
                  target,
                  singletons: Optional[Tuple] = (),
+                 context: Optional[Context] = None
                  ):
 
         container = self.container
@@ -27,8 +28,9 @@ class Injector:
         # Make the args dict that we will construct dataclass with
         args = {}
 
-        # Get the context from the container
-        context: Context = container.get(Context)
+        # If not passed in, get the context from the container
+        if context is None:
+            context: Context = container.get(Context)
 
         # Iterate through the dataclass fields
         # Because fields() gives a string for the type, instead of the
@@ -38,12 +40,15 @@ class Injector:
         # Iterate through the dataclass fields
         for field_name, field_type in get_type_hints(target).items():
 
-            # Do some special cases first.
+            # Doing this style of bailing out quickly for performance
+            # reasons. Don't want to keep doing "if", though it
+            # means some repetitions.
             if field_type == ServiceContainer:
-                # Doing this style of bailing out quickly for performance
-                # reasons. Don't want to keep doing "if", though it
-                # means some repeititions.
                 args[field_name] = container
+                continue
+
+            if field_type == Context:
+                args[field_name] = context
                 continue
 
             # See if this field is using the injectable field, e.g.
