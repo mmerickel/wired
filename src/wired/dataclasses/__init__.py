@@ -15,8 +15,6 @@ TODO
 
 - TODO wired-paul.readthedocs.io
 
-- TODO change the dcdi tutorial to not need ``for_`` since the thing being looked up is a subclass
-
 - TODO figure out backport of dataclasses
 
 - TODO for_ allows not inheriting in order to get matches

@@ -28,7 +28,6 @@ Or a decorator version which overrides the built-in ``Greeter`` for a ``FrenchCu
     @dataclass
     class FrenchGreeter:
         punctuation: str = injected(Settings, attr='punctuation')
-	
 
 Simple Type-Based Injection
 ===========================
@@ -50,7 +49,7 @@ First, let's repeat it, but with the part that actually registers the dataclass:
 
 This is equivalent to:
 
-.. code-block::
+.. code-block:: python
 
     @dataclass
     class Greeter:
