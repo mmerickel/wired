@@ -197,6 +197,13 @@ The decorator version, in this case, shows that ``factory`` takes those argument
 
 With that, whenever someone asks for a ``Greeter``, if the current context is a ``FrenchCustomer``, they'll get ``FrenchGreeter`` instead.
 		       
+Injected
+========
+
+- What if you want a different type than the factory?
+
+- E.e. ``customer: FrenchCustomer = injected(Context)``
+
 Attributes
 ==========
 
