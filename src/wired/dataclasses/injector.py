@@ -30,7 +30,11 @@ class Injector:
 
         # If not passed in, get the context from the container
         if context is None:
-            context: Context = container.get(Context)
+            try:
+                context: Context = container.get(Context)
+            except LookupError:
+                # It's ok to have context=None
+                pass
 
         # Iterate through the dataclass fields
         # Because fields() gives a string for the type, instead of the

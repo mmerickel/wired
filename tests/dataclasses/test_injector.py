@@ -189,7 +189,7 @@ def test_injected_context(monkeypatch, container, dummy_context):
     assert 'dummy_context' == getattr(result.context, 'name')
 
 
-def test_manual_ontext(container, dummy_context):
+def test_manual_context(container, dummy_context):
     # Manually pass the context to the injector call, instead
     # relying on the injector to lookup the Context in the container.
 
@@ -200,6 +200,17 @@ def test_manual_ontext(container, dummy_context):
     inj = Injector(container=container)
     result: Dummy = inj(Dummy, context=dummy_context)
     assert 'dummy_context' == getattr(result.context, 'name')
+
+
+def test_no_registered_or_manual_context(container, dummy_context):
+    # No registered context factory, no context passed in
+    @dataclass
+    class Dummy:
+        context: Context
+
+    inj = Injector(container=container)
+    result: Dummy = inj(Dummy, context=None)
+    assert None is result.context
 
 
 def test_container_post_init(monkeypatch, container, dummy_context):
