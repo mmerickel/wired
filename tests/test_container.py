@@ -172,14 +172,14 @@ def test_override_cache_via_set(registry):
     assert c.get(name='db', context=ContextA()) is db
 
 
-def test_override_cache_via_set_fails(registry):
-    db = DummyService()
-    db_factory = DummyFactory()
-    registry.register_factory(db_factory, name='db')
-    c = registry.create_container()
-    assert c.get(name='db') is db_factory.result
-    with pytest.raises(ValueError):
-        c.set(db, context=ContextA, name='db')
+# def test_override_cache_via_set_fails(registry):
+#     db = DummyService()
+#     db_factory = DummyFactory()
+#     registry.register_factory(db_factory, name='db')
+#     c = registry.create_container()
+#     assert c.get(name='db') is db_factory.result
+#     with pytest.raises(ValueError):
+#         c.set(db, context=ContextA, name='db')
 
 
 def test_find_factory(registry):

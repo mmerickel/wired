@@ -18,6 +18,8 @@ class Sentinel:
 
 _marker = Sentinel('default')
 
+_default_context = None
+
 
 class IServiceFactory(Interface):
     """ A marker interface for service factories."""
@@ -119,7 +121,7 @@ class ServiceContainer:
 
     _ServiceCache = ServiceCache  # for testing
 
-    def __init__(self, factories, cache=None, context=None):
+    def __init__(self, factories, cache=None, context=_default_context):
         if cache is None:
             cache = self._ServiceCache()
         self.factories = factories
@@ -138,7 +140,7 @@ class ServiceContainer:
         )
 
     def set(
-        self, service, iface_or_type=Interface, *, context=Interface, name=''
+        self, service, iface_or_type=Interface, *, context=_default_context, name=''
     ):
         """
         Add a service instance to the container.
@@ -161,7 +163,7 @@ class ServiceContainer:
         """
         iface = _iface_for_type(iface_or_type)
         context_iface = _iface_for_context(context)
-        cache = self.cache.get(None)
+        cache = self.cache.get(context)
 
         inst = cache.lookup(
             (IServiceInstance, context_iface),
@@ -181,7 +183,7 @@ class ServiceContainer:
         self,
         iface_or_type=Interface,
         *,
-        context=_marker,
+        context=_default_context,
         name='',
         default=_marker
     ):
@@ -208,7 +210,7 @@ class ServiceContainer:
         :param default: A service instance to return if lookup fails.
 
         """
-        if context is not _marker and context is not self.context:
+        if context is not _default_context and context is not self.context:
             proxy = self.bind(context=context)
             return proxy.get(iface_or_type, name=name, default=default)
 
@@ -226,23 +228,34 @@ class ServiceContainer:
         if inst is not _marker:
             return inst
 
-        # there is no instance registered for this context, fallback to
-        # see if there is one registered for context=None before falling
-        # back to factories, this would normally be from a call to .set()
-        if context is not None:
-            inst = self.cache.get(None).lookup(
-                (IServiceInstance, context_iface),
-                iface,
-                name=name,
-                default=_marker,
-            )
-            if inst is not _marker:
-                return inst
+        # there is no instance cached for this context, fallback
+        # context class to see if there is one cached
+        inst = self.cache.get(context.__class__).lookup(
+            (IServiceInstance, context_iface),
+            iface,
+            name=name,
+            default=_marker,
+        )
+        if inst is not _marker:
+            return inst
 
         svc_info = self.factories.lookup(
             (IServiceFactory, context_iface), iface, name=name, default=_marker
         )
         if svc_info is _marker:
+
+            # there is no instance registered for this context, fallback to
+            # see if there is one registered for context=None before falling
+            # back to factories, this would normally be from a call to .set()
+            if context is not _default_context:
+                inst = self.cache.get(_default_context).lookup(
+                    (IServiceInstance, context_iface),
+                    iface,
+                    name=name,
+                    default=_marker,
+                )
+                if inst is not _marker:
+                    return inst
             if default is not _marker:
                 return default
             raise LookupError('could not find registered service factory')
@@ -250,8 +263,8 @@ class ServiceContainer:
         # there is no service registered for this context, fallback
         # to see if there is one registered for context=None by hiding
         # the current context for the remainder of the lookup
-        if not svc_info.wants_context and context is not None:
-            proxy = self.bind(context=None)
+        if not svc_info.wants_context and context is not _default_context:
+            proxy = self.bind(context=_default_context)
             return proxy.get(iface_or_type, name=name, default=default)
 
         inst = svc_info.factory(self)
@@ -292,7 +305,7 @@ class ServiceRegistry:
             factory_registry = self._AdapterRegistry()
         self.factories = factory_registry
 
-    def create_container(self, *, context=None):
+    def create_container(self, *, context=_default_context):
         """
         Create a new :class:`wired.ServiceContainer` linked to the registry.
 
@@ -312,7 +325,7 @@ class ServiceRegistry:
         return self._ServiceContainer(self.factories, context=context)
 
     def register_factory(
-        self, factory, iface_or_type=Interface, *, context=None, name=''
+        self, factory, iface_or_type=Interface, *, context=_default_context, name=''
     ):
         """
         Register a service factory.
@@ -363,7 +376,7 @@ class ServiceRegistry:
         """
         iface = _iface_for_type(iface_or_type)
         context_iface = _iface_for_context(context)
-        wants_context = context is not None
+        wants_context = context is not _default_context
 
         info = ServiceFactoryInfo(factory, iface, context_iface, wants_context)
         self.factories.register(
@@ -371,7 +384,7 @@ class ServiceRegistry:
         )
 
     def register_singleton(
-        self, service, iface_or_type=Interface, *, context=None, name=''
+        self, service, iface_or_type=Interface, *, context=_default_context, name=''
     ):
         """
         Register a singleton instance.
@@ -389,7 +402,7 @@ class ServiceRegistry:
             service_factory, iface_or_type, context=context, name=name
         )
 
-    def find_factory(self, iface_or_type=Interface, *, context=None, name=''):
+    def find_factory(self, iface_or_type=Interface, *, context=_default_context, name=''):
         """
         Return the factory registered for the given parameters.
 
