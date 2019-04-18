@@ -167,9 +167,11 @@ def test_override_cache_via_set(registry):
     db_factory = DummyFactory()
     registry.register_factory(db_factory, name='db')
     c = registry.create_container()
-    c.set(db, context=ContextA, name='db')
+    ctx_a = ContextA()
+    c.set(db, name='db', context=ctx_a)
     assert c.get(name='db') is db_factory.result
-    assert c.get(name='db', context=ContextA()) is db
+    assert c.get(name='db', context=ctx_a) is db
+    assert c.get(name='db', context=ContextA()) is db_factory.result
 
 
 def test_override_cache_via_set_fails(registry):
@@ -179,7 +181,7 @@ def test_override_cache_via_set_fails(registry):
     c = registry.create_container()
     assert c.get(name='db') is db_factory.result
     with pytest.raises(ValueError):
-        c.set(db, context=ContextA, name='db')
+        c.set(db, name='db')
 
 
 def test_find_factory(registry):
@@ -235,11 +237,10 @@ def test_cache_context(registry):
     factory_b = DummyFactoryB()
 
     registry.register_factory(factory_a, DummyFactory)
-    # registry.register_factory(factory_a, DummyFactory, context=ContextA)
     registry.register_factory(factory_b, DummyFactory, context=ContextB)
 
     container = registry.create_container()
-    # assert container.get(DummyFactory, context=context_b) is factory_b.result  # this one is passing
+    # order matters here
     assert container.get(DummyFactory) is factory_a.result
     assert container.get(DummyFactory, context=context_a) is factory_a.result
     assert container.get(DummyFactory, context=context_b) is factory_b.result

@@ -138,12 +138,13 @@ class ServiceContainer:
         )
 
     def set(
-        self, service, iface_or_type=Interface, *, context=Interface, name=''
+        self, service, iface_or_type=Interface, *, context=_marker, name=''
     ):
         """
         Add a service instance to the container.
 
-        Upon success, ``service`` will be returned for any uncached lookups.
+        Upon success, ``service`` will be returned for matching lookups on
+        the same context.
 
         If this service registration would affect a previously-cached lookup
         then it will raise a ``ValueError``.
@@ -152,17 +153,17 @@ class ServiceContainer:
         :param iface_or_type: A class or ``zope.interface.Interface`` object
             defining the interface of the service. Defaults to
             ``zope.interface.Interface`` to match any requested interface.
-        :param context: A class or ``zope.interface.Interface`` object
-            defining the type of :attr:`.context` required in order to use
-            the factory. Defaults to ``zope.interface.Interface`` to match
-            any context.
+        :param context: A context object. The ``service`` instance will be
+            cached for any later lookups using this context. Defaults to the
+            bound :attr:`.context` on the container.
         :param str name: An identifier for the service.
 
         """
+        if context is _marker:
+            context = self.context
         iface = _iface_for_type(iface_or_type)
-        context_iface = _iface_for_context(context)
-        cache = self.cache.get(None)
-
+        context_iface = providedBy(context)
+        cache = self.cache.get(context)
         inst = cache.lookup(
             (IServiceInstance, context_iface),
             iface,
@@ -190,14 +191,14 @@ class ServiceContainer:
 
         The instance is found using the following algorithm:
 
-            1. Find an instance matching the criteria in the container. If one
-               is found, return it directly.
+        1. Find an instance matching the criteria in the container. If one
+           is found, return it directly.
 
-            2. If no instance is found, search for the factory on the registry.
-               If one is not found, raise a ``LookupError`` or, if provided,
-               return ``default``.
+        2. Search for a factory on the registry. If one is not found,
+           raise a ``LookupError`` or, if specified, return ``default``.
 
-            3. Instiantiate the factory, caching the result in the container.
+        3. Invoking the factory, cache the result in the container for later
+           lookups, and return the result.
 
         :param iface_or_type: The registered service interface.
         :param context: A context object. This object will be available as
@@ -225,19 +226,6 @@ class ServiceContainer:
         )
         if inst is not _marker:
             return inst
-
-        # there is no instance registered for this context, fallback to
-        # see if there is one registered for context=None before falling
-        # back to factories, this would normally be from a call to .set()
-        if context is not None:
-            inst = self.cache.get(None).lookup(
-                (IServiceInstance, context_iface),
-                iface,
-                name=name,
-                default=_marker,
-            )
-            if inst is not _marker:
-                return inst
 
         svc_info = self.factories.lookup(
             (IServiceFactory, context_iface), iface, name=name, default=_marker
@@ -294,7 +282,7 @@ class ServiceRegistry:
 
     def create_container(self, *, context=None):
         """
-        Create a new :class:`wired.ServiceContainer` linked to the registry.
+        Create a new :class:`.ServiceContainer` linked to the registry.
 
         A container will use all the registered service factories,
         independently of any other containers, in order to find and
@@ -340,7 +328,7 @@ class ServiceRegistry:
                 return LoginService(dbsession)
 
         Notice in the above example that the ``login_factory`` requires
-        another service named ``db`` to be registered which triggers a
+        another service named ``dbsession`` to be registered which triggers a
         recursive lookup for that service in order to create the
         ``LoginService`` instance.
 
