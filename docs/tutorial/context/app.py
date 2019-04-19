@@ -50,6 +50,9 @@ class Greeter:
 class FrenchGreeter(Greeter):
     greeting: str = 'Bonjour'
 
+    def __call__(self, customer: Customer) -> str:
+        return f'{self.greeting} {customer.name} {self.punctuation}'
+
 
 def setup(settings: Settings) -> ServiceRegistry:
     # Make the registry
