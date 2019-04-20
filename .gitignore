@@ -64,3 +64,5 @@ env27
 cover
 
 bs-config.json
+.python-version
+pip-wheel-metadata

@@ -1,5 +1,4 @@
 [run]
-parallel = true
 source =
     wired
     tests

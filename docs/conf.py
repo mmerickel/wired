@@ -115,16 +115,8 @@ pygments_style = 'sphinx'
 
 # -- Options for HTML output -------------------------------------------
 
-# Add and use Pylons theme
-sys.path.append(os.path.abspath('_themes'))
-import pylons_sphinx_themes
-html_theme_path = pylons_sphinx_themes.get_html_themes_path()
-html_theme = 'pylons'
-
-
-html_theme_options = {
-    'github_url': 'https://github.com/mmerickel/wired'
-}
+# Add and use Sphinx RTD theme
+html_theme = 'sphinx_rtd_theme'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
