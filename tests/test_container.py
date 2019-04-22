@@ -105,8 +105,8 @@ def test_bind_context(registry):
     ctx = object()
     c1 = registry.create_container()
     c2 = c1.bind(context=ctx)
-    assert c1.cache is c2.cache
-    assert c1.factories is c2.factories
+    assert c1._cache is c2._cache
+    assert c1._factories is c2._factories
     c3 = c2.bind(context=ctx)
     assert c2 is c3
 

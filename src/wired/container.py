@@ -60,14 +60,14 @@ class ServiceCache:
     _AdapterRegistry = AdapterRegistry  # for testing
 
     def __init__(self):
-        self.contexts = {}
-        self.ref = weakref.ref(self)
+        self._contexts = {}
+        self._ref = weakref.ref(self)
 
     def __del__(self):
         # try to remove the finalizers from the contexts incase the context
         # is still alive, there's no sense in having a weakref attached to it
         # now that the cache is dead
-        for ctx_id, ctx_cache in self.contexts.items():
+        for ctx_id, ctx_cache in self._contexts.items():
             finalizer = ctx_cache.lookup(
                 (), IContextFinalizer, name='', default=_marker
             )
@@ -75,15 +75,16 @@ class ServiceCache:
                 finalizer.detach()
 
     def get(self, context):
+        contexts = self._contexts
         ctx_id = id(context)
-        ctx_cache = self.contexts.get(ctx_id, None)
+        ctx_cache = contexts.get(ctx_id, None)
         if ctx_cache is None:
             ctx_cache = self._AdapterRegistry()
             try:
                 finalizer = weakref.finalize(
                     context,
                     context_finalizer,
-                    cache_ref=self.ref,
+                    cache_ref=self._ref,
                     ctx_id=ctx_id,
                 )
             except TypeError:
@@ -93,7 +94,7 @@ class ServiceCache:
             else:
                 finalizer.atexit = False
                 ctx_cache.register((), IContextFinalizer, '', finalizer)
-            self.contexts[ctx_id] = ctx_cache
+            contexts[ctx_id] = ctx_cache
         return ctx_cache
 
 
@@ -101,8 +102,8 @@ def context_finalizer(cache_ref, ctx_id):  # pragma: no cover
     # if the context lives longer than self then remove it
     # to avoid keeping any refs to the registry
     cache = cache_ref()
-    if cache is not None and ctx_id in cache.contexts:
-        del cache.contexts[ctx_id]
+    if cache is not None and ctx_id in cache._contexts:
+        del cache._contexts[ctx_id]
 
 
 class ServiceContainer:
@@ -122,8 +123,8 @@ class ServiceContainer:
     def __init__(self, factories, cache=None, context=None):
         if cache is None:
             cache = self._ServiceCache()
-        self.factories = factories
-        self.cache = cache
+        self._factories = factories
+        self._cache = cache
         self.context = context
 
     def bind(self, *, context):
@@ -134,7 +135,7 @@ class ServiceContainer:
         if context is self.context:
             return self
         return self.__class__(
-            factories=self.factories, cache=self.cache, context=context
+            factories=self._factories, cache=self._cache, context=context
         )
 
     def set(
@@ -163,7 +164,7 @@ class ServiceContainer:
             context = self.context
         iface = _iface_for_type(iface_or_type)
         context_iface = providedBy(context)
-        cache = self.cache.get(context)
+        cache = self._cache.get(context)
         inst = cache.lookup(
             (IServiceInstance, context_iface),
             iface,
@@ -216,7 +217,7 @@ class ServiceContainer:
         context = self.context
         iface = _iface_for_type(iface_or_type)
         context_iface = providedBy(context)
-        cache = self.cache.get(context)
+        cache = self._cache.get(context)
 
         inst = cache.lookup(
             (IServiceInstance, context_iface),
@@ -227,7 +228,7 @@ class ServiceContainer:
         if inst is not _marker:
             return inst
 
-        svc_info = self.factories.lookup(
+        svc_info = self._factories.lookup(
             (IServiceFactory, context_iface), iface, name=name, default=_marker
         )
         if svc_info is _marker:
@@ -278,7 +279,7 @@ class ServiceRegistry:
     def __init__(self, factory_registry=None):
         if factory_registry is None:
             factory_registry = self._AdapterRegistry()
-        self.factories = factory_registry
+        self._factories = factory_registry
 
     def create_container(self, *, context=None):
         """
@@ -297,7 +298,7 @@ class ServiceRegistry:
             the container is bound to the ``None`` context.
 
         """
-        return self._ServiceContainer(self.factories, context=context)
+        return self._ServiceContainer(self._factories, context=context)
 
     def register_factory(
         self, factory, iface_or_type=Interface, *, context=None, name=''
@@ -354,7 +355,7 @@ class ServiceRegistry:
         wants_context = context is not None
 
         info = ServiceFactoryInfo(factory, iface, context_iface, wants_context)
-        self.factories.register(
+        self._factories.register(
             (IServiceFactory, context_iface), iface, name, info
         )
 
@@ -390,7 +391,7 @@ class ServiceRegistry:
         iface = _iface_for_type(iface_or_type)
         context_iface = _iface_for_context(context)
 
-        svc_info = self.factories.lookup(
+        svc_info = self._factories.lookup(
             (IServiceFactory, context_iface), iface, name=name, default=_marker
         )
         if svc_info is not _marker:
