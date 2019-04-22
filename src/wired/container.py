@@ -59,7 +59,8 @@ class ServiceCache:
 
     _AdapterRegistry = AdapterRegistry  # for testing
 
-    def __init__(self):
+    def __init__(self, default=None):
+        self._default = None
         self._contexts = {}
         self._ref = weakref.ref(self)
 
@@ -74,7 +75,15 @@ class ServiceCache:
             if finalizer is not _marker:  # pragma: no cover
                 finalizer.detach()
 
-    def get(self, context):
+    def find(self, context=_marker):
+        if context is _marker:
+            context = self._default
+        ctx_id = id(context)
+        return self._contexts.get(ctx_id, None)
+
+    def get(self, context=_marker):
+        if context is _marker:
+            context = self._default
         contexts = self._contexts
         ctx_id = id(context)
         ctx_cache = contexts.get(ctx_id, None)
@@ -122,7 +131,7 @@ class ServiceContainer:
 
     def __init__(self, factories, cache=None, context=None):
         if cache is None:
-            cache = self._ServiceCache()
+            cache = self._ServiceCache(context)
         self._factories = factories
         self._cache = cache
         self.context = context
@@ -137,6 +146,93 @@ class ServiceContainer:
         return self.__class__(
             factories=self._factories, cache=self._cache, context=context
         )
+
+    def get(
+        self,
+        iface_or_type=Interface,
+        *,
+        context=_marker,
+        name='',
+        default=_marker
+    ):
+        """
+        Find a cached instance or create one from the registered factory.
+
+        The instance is found using the following algorithm:
+
+        1. Find an instance matching the criteria in the container. If one
+           is found, return it directly.
+
+        2. Search for a factory, first in the container and second on the
+           service registry. If one is not found, raise a ``LookupError`` or,
+           if specified, return ``default``.
+
+        3. Invoking the factory, cache the result in the container for later
+           lookups, and return the result.
+
+        :param iface_or_type: The registered service interface.
+        :param context: A context object. This object will be available as
+            ``container.context`` in the invoked service factories and will
+            influence which factories are matched. Defaults to the bound
+            :attr:`.context` on the container.
+        :param str name: The registered name of the service.
+        :param default: A service instance to return if lookup fails.
+
+        """
+        if context is not _marker and context is not self.context:
+            proxy = self.bind(context=context)
+            return proxy.get(iface_or_type, name=name, default=default)
+
+        context = self.context
+        iface = _iface_for_type(iface_or_type)
+        context_iface = providedBy(context)
+        cache = self._cache.get(context)
+
+        inst = cache.lookup(
+            (IServiceInstance, context_iface),
+            iface,
+            name=name,
+            default=_marker,
+        )
+        if inst is not _marker:
+            return inst
+
+        svc_info = None
+
+        # lookup in the local registry if it exists
+        factories = self._cache.find()
+        if factories is not None:
+            svc_info = _find_factory(factories, iface, context_iface, name)
+
+        # lookup in the global registry
+        if svc_info is None:
+            svc_info = _find_factory(
+                self._factories, iface, context_iface, name
+            )
+
+        if svc_info is None:
+            if default is not _marker:
+                return default
+            raise LookupError('could not find registered service factory')
+
+        # there is no service registered for this context, fallback
+        # to see if there is one registered for context=None by hiding
+        # the current context for the remainder of the lookup
+        if not svc_info.wants_context and context is not None:
+            proxy = self.bind(context=None)
+            return proxy.get(iface_or_type, name=name, default=default)
+
+        inst = svc_info.factory(self)
+
+        # make sure to register the service using the original, general
+        # context_iface, not the provided one as it may be more specific
+        cache.register(
+            (IServiceInstance, svc_info.context_iface),
+            svc_info.service_iface,
+            name,
+            inst,
+        )
+        return inst
 
     def set(
         self, service, iface_or_type=Interface, *, context=_marker, name=''
@@ -179,81 +275,41 @@ class ServiceContainer:
 
         cache.register((IServiceInstance, context_iface), iface, name, service)
 
-    def get(
-        self,
-        iface_or_type=Interface,
-        *,
-        context=_marker,
-        name='',
-        default=_marker
+    def register_factory(
+        self, factory, iface_or_type=Interface, *, context=None, name=''
     ):
         """
-        Find a cached instance or create one from the registered factory.
+        Register a service factory.
 
-        The instance is found using the following algorithm:
-
-        1. Find an instance matching the criteria in the container. If one
-           is found, return it directly.
-
-        2. Search for a factory on the registry. If one is not found,
-           raise a ``LookupError`` or, if specified, return ``default``.
-
-        3. Invoking the factory, cache the result in the container for later
-           lookups, and return the result.
-
-        :param iface_or_type: The registered service interface.
-        :param context: A context object. This object will be available as
-            ``container.context`` in the invoked service factories and will
-            influence which factories are matched. Defaults to the bound
-            :attr:`.context` on the container.
-        :param str name: The registered name of the service.
-        :param default: A service instance to return if lookup fails.
+        This factory will override any lookups defined in the service registry.
+        Otherwise the semantics are identical to
+        :meth:`.ServiceRegistry.register_factory`.
 
         """
-        if context is not _marker and context is not self.context:
-            proxy = self.bind(context=context)
-            return proxy.get(iface_or_type, name=name, default=default)
-
-        context = self.context
         iface = _iface_for_type(iface_or_type)
-        context_iface = providedBy(context)
-        cache = self._cache.get(context)
+        context_iface = _iface_for_context(context)
+        wants_context = context is not None
 
-        inst = cache.lookup(
-            (IServiceInstance, context_iface),
-            iface,
-            name=name,
-            default=_marker,
+        info = ServiceFactoryInfo(factory, iface, context_iface, wants_context)
+        factories = self._cache.get()
+        _register_factory(info, factories, iface, context_iface, name)
+
+    def register_singleton(
+        self, service, iface_or_type=Interface, *, context=None, name=''
+    ):
+        """
+        Register a singleton instance.
+
+        Functionally, the singleton is wrapped in a factory that always
+        returns the same instance when invoked. See
+        :meth:`.ServiceRegistry.register_factory` for information on the
+        parameters.
+
+        """
+        service_factory = SingletonServiceWrapper(service)
+        return self.register_factory(
+            service_factory, iface_or_type, context=context, name=name
         )
-        if inst is not _marker:
-            return inst
-
-        svc_info = self._factories.lookup(
-            (IServiceFactory, context_iface), iface, name=name, default=_marker
-        )
-        if svc_info is _marker:
-            if default is not _marker:
-                return default
-            raise LookupError('could not find registered service factory')
-
-        # there is no service registered for this context, fallback
-        # to see if there is one registered for context=None by hiding
-        # the current context for the remainder of the lookup
-        if not svc_info.wants_context and context is not None:
-            proxy = self.bind(context=None)
-            return proxy.get(iface_or_type, name=name, default=default)
-
-        inst = svc_info.factory(self)
-
-        # make sure to register the service using the original, general
-        # context_iface, not the provided one as it may be more specific
-        cache.register(
-            (IServiceInstance, svc_info.context_iface),
-            svc_info.service_iface,
-            name,
-            inst,
-        )
-        return inst
 
 
 class ServiceRegistry:
@@ -355,9 +411,7 @@ class ServiceRegistry:
         wants_context = context is not None
 
         info = ServiceFactoryInfo(factory, iface, context_iface, wants_context)
-        self._factories.register(
-            (IServiceFactory, context_iface), iface, name, info
-        )
+        _register_factory(info, self._factories, iface, context_iface, name)
 
     def register_singleton(
         self, service, iface_or_type=Interface, *, context=None, name=''
@@ -391,11 +445,19 @@ class ServiceRegistry:
         iface = _iface_for_type(iface_or_type)
         context_iface = _iface_for_context(context)
 
-        svc_info = self._factories.lookup(
-            (IServiceFactory, context_iface), iface, name=name, default=_marker
-        )
-        if svc_info is not _marker:
+        svc_info = _find_factory(self._factories, iface, context_iface, name)
+        if svc_info is not None:
             return svc_info.factory
+
+
+def _register_factory(info, factories, iface, context_iface, name):
+    factories.register((IServiceFactory, context_iface), iface, name, info)
+
+
+def _find_factory(factories, iface, context_iface, name):
+    return factories.lookup(
+        (IServiceFactory, context_iface), iface, name=name, default=None
+    )
 
 
 def _iface_for_type(obj):

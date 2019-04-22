@@ -19,6 +19,10 @@ class ContextA:
     pass
 
 
+class ContextB:
+    pass
+
+
 class IContextInterface(Interface):
     pass
 
@@ -184,6 +188,17 @@ def test_override_cache_via_set_fails(registry):
         c.set(db, name='db')
 
 
+def test_container_override_factory_per_container(registry):
+    db_factory1 = DummyFactory()
+    registry.register_factory(db_factory1, name='db')
+    c = registry.create_container()
+    db_override = DummyService()
+    c.register_singleton(db_override, context=ContextA, name='db')
+    assert c.get(name='db') is db_factory1.result
+    assert c.get(name='db', context=ContextA()) is db_override
+    assert c.get(name='db', context=ContextB()) is db_factory1.result
+
+
 def test_find_factory(registry):
     factory = DummyFactory()
     registry.register_factory(factory, name='foo')
@@ -221,6 +236,7 @@ def test_unique_class_objects_with_same_name_dont_conflict(registry):
     assert registry.find_factory(ClassB) is None
 
 
+# https://github.com/mmerickel/wired/issues/12
 def test_cache_context(registry):
     class ContextB:
         pass
