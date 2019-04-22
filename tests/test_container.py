@@ -19,6 +19,10 @@ class ContextA:
     pass
 
 
+class ContextB:
+    pass
+
+
 class IContextInterface(Interface):
     pass
 
@@ -105,8 +109,8 @@ def test_bind_context(registry):
     ctx = object()
     c1 = registry.create_container()
     c2 = c1.bind(context=ctx)
-    assert c1.cache is c2.cache
-    assert c1.factories is c2.factories
+    assert c1._cache is c2._cache
+    assert c1._factories is c2._factories
     c3 = c2.bind(context=ctx)
     assert c2 is c3
 
@@ -167,9 +171,11 @@ def test_override_cache_via_set(registry):
     db_factory = DummyFactory()
     registry.register_factory(db_factory, name='db')
     c = registry.create_container()
-    c.set(db, context=ContextA, name='db')
+    ctx_a = ContextA()
+    c.set(db, name='db', context=ctx_a)
     assert c.get(name='db') is db_factory.result
-    assert c.get(name='db', context=ContextA()) is db
+    assert c.get(name='db', context=ctx_a) is db
+    assert c.get(name='db', context=ContextA()) is db_factory.result
 
 
 def test_override_cache_via_set_fails(registry):
@@ -179,7 +185,18 @@ def test_override_cache_via_set_fails(registry):
     c = registry.create_container()
     assert c.get(name='db') is db_factory.result
     with pytest.raises(ValueError):
-        c.set(db, context=ContextA, name='db')
+        c.set(db, name='db')
+
+
+def test_container_override_factory_per_container(registry):
+    db_factory1 = DummyFactory()
+    registry.register_factory(db_factory1, name='db')
+    c = registry.create_container()
+    db_override = DummyService()
+    c.register_singleton(db_override, context=ContextA, name='db')
+    assert c.get(name='db') is db_factory1.result
+    assert c.get(name='db', context=ContextA()) is db_override
+    assert c.get(name='db', context=ContextB()) is db_factory1.result
 
 
 def test_find_factory(registry):
@@ -217,3 +234,26 @@ def test_unique_class_objects_with_same_name_dont_conflict(registry):
     ClassB = make_class()
     registry.register_singleton(ClassA(), ClassA)
     assert registry.find_factory(ClassB) is None
+
+
+# https://github.com/mmerickel/wired/issues/12
+def test_cache_context(registry):
+    class DummyFactoryA(DummyFactory):
+        pass
+
+    class DummyFactoryB(DummyFactory):
+        pass
+
+    context_a = ContextA()
+    context_b = ContextB()
+    factory_a = DummyFactoryA()
+    factory_b = DummyFactoryB()
+
+    registry.register_factory(factory_a, DummyFactory)
+    registry.register_factory(factory_b, DummyFactory, context=ContextB)
+
+    container = registry.create_container()
+    # order matters here
+    assert container.get(DummyFactory) is factory_a.result
+    assert container.get(DummyFactory, context=context_a) is factory_a.result
+    assert container.get(DummyFactory, context=context_b) is factory_b.result
