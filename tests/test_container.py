@@ -238,9 +238,6 @@ def test_unique_class_objects_with_same_name_dont_conflict(registry):
 
 # https://github.com/mmerickel/wired/issues/12
 def test_cache_context(registry):
-    class ContextB:
-        pass
-
     class DummyFactoryA(DummyFactory):
         pass
 
