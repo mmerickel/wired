@@ -8,5 +8,5 @@ pytest_collect_file = Sybil(
         DocTestParser(optionflags=ELLIPSIS | FIX_BYTE_UNICODE_REPR),
         CodeBlockParser(future_imports=['print_function']),
     ],
-    pattern='index.rst',
+    pattern='*.rst',
 ).pytest()
