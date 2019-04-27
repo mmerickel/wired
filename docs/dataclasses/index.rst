@@ -82,6 +82,8 @@ DI gives a much smaller surface area.
 
 TODO
 
+- Context
+
 - request/resource/view patterns
 
 - __call__
@@ -92,7 +94,6 @@ TODO
 
 - Caching
 
-- Context
 
 Contents
 ========
