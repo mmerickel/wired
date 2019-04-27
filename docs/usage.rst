@@ -124,8 +124,8 @@ For example, imagine binding the web request itself as a service, or the active 
 
     container = registry.create_container()
 
-    container.set(request, IRequest)
-    container.set(request.user, IUser)
+    container.register_singleton(request, IRequest)
+    container.register_singleton(request.user, IUser)
 
     # later ...
 
