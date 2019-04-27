@@ -88,4 +88,7 @@ class View:
     punctuation: str = injected(Greeter, attr='punctuation')
 
     def __call__(self) -> str:
-        return f'{self.url}: {self.greeting} {self.customer_title} {self.punctuation}'
+        return (
+            f'{self.url}: {self.greeting} {self.customer_title} '
+            f'{self.punctuation}'
+        )

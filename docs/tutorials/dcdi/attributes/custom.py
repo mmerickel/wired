@@ -27,9 +27,7 @@ class FrenchGreeter(Greeter):
 
 def setup(registry: ServiceRegistry, datastore: Datastore):
     register_dataclass(
-        registry,
-        FrenchGreeter, Greeter,
-        context=FrenchCustomer
+        registry, FrenchGreeter, Greeter, context=FrenchCustomer
     )
 
     # Add a FrenchCustomer to the datastore

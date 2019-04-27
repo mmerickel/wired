@@ -58,6 +58,7 @@ def setup(settings: Settings) -> ServiceRegistry:
 
     # Import the add-on and initialize it
     from .custom import setup
+
     setup(registry, settings)
 
     return registry
@@ -90,6 +91,7 @@ def main():
     # Make a FrenchCustomer, pass into the "greet_customer" interaction,
     # then test the result.
     from .custom import FrenchCustomer
+
     french_customer = FrenchCustomer(name='Henri')
     assert 'Bonjour Henri !!' == greet_customer(registry, french_customer)
 

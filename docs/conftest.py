@@ -12,7 +12,7 @@ if sys.version_info >= (3, 7):
         parsers=[
             DocTestParser(optionflags=ELLIPSIS | FIX_BYTE_UNICODE_REPR),
             CodeBlockParser(future_imports=['print_function']),
-            skip
+            skip,
         ],
-        pattern='index.rst'
+        pattern='index.rst',
     ).pytest()

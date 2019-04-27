@@ -31,18 +31,13 @@ def injector_construction(container: ServiceContainer, target):
     # Iterate through the dataclass fields
     for field_name, field_type in get_type_hints(target).items():
         if field_type != str:
-            field_value = container.get(field_type)
             args[field_name] = container.get(field_type)
 
     # Now construct an instance of the target dataclass
     return target(**args)
 
 
-def register_dataclass(registry: ServiceRegistry,
-                       target,
-                       for_,
-                       context=None
-                       ):
+def register_dataclass(registry: ServiceRegistry, target, for_, context=None):
     """ Generic injectory factory for dataclasses """
 
     # Note: This function could be a decorator which already knows

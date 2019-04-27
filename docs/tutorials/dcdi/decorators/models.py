@@ -22,12 +22,14 @@ from .utils import injected
 @dataclass(frozen=True)
 class Url:
     """ Make it easy to get the currently-processed url """
+
     value: str
 
 
 @dataclass(frozen=True)
 class Resource:
     """ Base type for the business objects in the system """
+
     name: str
     title: str
 
@@ -91,4 +93,7 @@ class View:
     punctuation: str = injected(Greeter, attr='punctuation')
 
     def __call__(self) -> str:
-        return f'{self.url}: {self.greeting} {self.customer_title} {self.punctuation}'
+        return (
+            f'{self.url}: {self.greeting} {self.customer_title} '
+            f'{self.punctuation}'
+        )

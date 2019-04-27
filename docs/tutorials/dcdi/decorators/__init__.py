@@ -26,12 +26,8 @@ from typing import List
 import venusian
 
 from wired import ServiceRegistry, ServiceContainer
-from .models import (
-    Customer, Datastore, Greeter, Resource, Request, Settings, Url, View
-)
-from .utils import (
-    process_request,
-    register_dataclass)
+from .models import Customer, Datastore, Resource, Request, Settings
+from .utils import process_request, register_dataclass
 
 
 def app_bootstrap(settings: Settings) -> ServiceRegistry:
@@ -43,10 +39,9 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     registry.register_singleton(settings, Settings)
 
     # Scan for registrations
-    scanner = venusian.Scanner(
-        registry=registry, settings=settings
-    )
+    scanner = venusian.Scanner(registry=registry, settings=settings)
     from . import models
+
     scanner.scan(models)
 
     # Grab the datastore singleton to pass into setup
@@ -58,6 +53,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
 
     # Import the add-on and initialize it
     from . import custom
+
     scanner.scan(custom)
     custom.setup(registry, datastore)
 
@@ -67,7 +63,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
 def setup(registry: ServiceRegistry, datastore: Datastore):
     """ Initialize the features in the core application  """
 
-    for dc in (Resource, Request,):
+    for dc in (Resource, Request):
         register_dataclass(registry, dc)
 
     # During bootstrap, make some Customers
@@ -78,10 +74,7 @@ def setup(registry: ServiceRegistry, datastore: Datastore):
 def sample_interactions(registry: ServiceRegistry) -> List[str]:
     """ Pretend to do a couple of customer interactions """
 
-    return [
-        process_request(registry, url)
-        for url in ('mary', 'henri')
-    ]
+    return [process_request(registry, url) for url in ('mary', 'henri')]
 
 
 def main():
@@ -90,7 +83,8 @@ def main():
     greetings = sample_interactions(registry)
     assert greetings == [
         'mary: Hello Mary !!',
-        'henri and FrenchView: Bonjour Henri !!']
+        'henri and FrenchView: Bonjour Henri !!',
+    ]
 
 
 if __name__ == '__main__':

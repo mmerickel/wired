@@ -38,4 +38,3 @@ def setup(registry: ServiceRegistry, settings: Settings):
     datastore: Datastore = container.get(Datastore)
     henri = FrenchCustomer(name='henri', title='Henri')
     datastore.customers['henri'] = henri
-

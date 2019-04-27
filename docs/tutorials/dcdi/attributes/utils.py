@@ -78,7 +78,7 @@ def injector_construction(container: ServiceContainer, target):
             args[field_name] = field_value
         except TypeError:
             # Seems that wired, when looking up str, gives:
-            #   TypeError: can't set attributes of built-in/extension type 'str'
+            #  TypeError: can't set attributes of built-in/extension type 'str'
             # We will use that to our advantage to look for a dataclass
             # field default value.
             field_default = getattr(full_field, 'default', None)
@@ -97,11 +97,9 @@ def injector_construction(container: ServiceContainer, target):
     return target(**args)
 
 
-def register_dataclass(registry: ServiceRegistry,
-                       target,
-                       for_=None,
-                       context=None
-                       ):
+def register_dataclass(
+    registry: ServiceRegistry, target, for_=None, context=None
+):
     """ Generic injectory factory for dataclasses """
 
     # Note: This function could be a decorator which already knows
@@ -193,29 +191,17 @@ def injected(type_, **kwargs) -> Field:
 
     # Let's go in precedence
     if 'attr' in kwargs:
-        kwargs['metadata']['injected'] = dict(
-            type_=type_,
-            attr=kwargs['attr']
-        )
+        kwargs['metadata']['injected'] = dict(type_=type_, attr=kwargs['attr'])
         del kwargs['attr']
     elif 'key' in kwargs:
-        kwargs['metadata']['injected'] = dict(
-            type_=type_,
-            key=kwargs['key']
-        )
+        kwargs['metadata']['injected'] = dict(type_=type_, key=kwargs['key'])
         del kwargs['key']
     elif 'call' in kwargs:
         # We'll presume that it is call=True
-        kwargs['metadata']['injected'] = dict(
-            type_=type_,
-            call=kwargs['call']
-        )
+        kwargs['metadata']['injected'] = dict(type_=type_, call=kwargs['call'])
         del kwargs['call']
     else:
         # Default is to treat call=True if nothing else provided
-        kwargs['metadata']['injected'] = dict(
-            type_=type_,
-            call=True
-        )
+        kwargs['metadata']['injected'] = dict(type_=type_, call=True)
 
     return field(**kwargs)

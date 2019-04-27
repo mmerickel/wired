@@ -6,11 +6,7 @@ from .utils import register_dataclass
 
 # noinspection PyPep8Naming
 class singleton:
-    def __init__(self,
-                 for_=None,
-                 context=None,
-                 name: str = None,
-                 ):
+    def __init__(self, for_=None, context=None, name: str = None):
         self.for_ = for_
         self.context = context if context else for_
         self.name = name
@@ -33,11 +29,7 @@ class singleton:
 
 # noinspection PyPep8Naming
 class factory:
-    def __init__(self,
-                 for_=None,
-                 context=None,
-                 name: str = None,
-                 ):
+    def __init__(self, for_=None, context=None, name: str = None):
         self.for_ = for_
         self.context = context if context else for_
         self.name = name
@@ -48,12 +40,7 @@ class factory:
             # If there is a for_ use it, otherwise, register for the same
             # class as the instance
             for_ = self.for_ if self.for_ else cls
-            register_dataclass(
-                registry,
-                cls,
-                for_=for_,
-                context=self.context
-            )
+            register_dataclass(registry, cls, for_=for_, context=self.context)
 
         attach(wrapped, callback)
         return wrapped

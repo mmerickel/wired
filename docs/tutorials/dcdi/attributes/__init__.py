@@ -25,7 +25,13 @@ from typing import List
 
 from wired import ServiceRegistry
 from .models import (
-    Customer, Datastore, Greeter, Resource, Request, Settings, Url, View
+    Customer,
+    Datastore,
+    Greeter,
+    Resource,
+    Request,
+    Settings,
+    View,
 )
 from .utils import process_request, register_dataclass
 
@@ -47,6 +53,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
 
     # Import the add-on and initialize it
     from .custom import setup as addon_setup
+
     addon_setup(registry, datastore)
 
     return registry
@@ -55,7 +62,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
 def setup(registry: ServiceRegistry, datastore: Datastore):
     """ Initialize the features in the core application  """
 
-    for dc in (Resource, Request, Greeter, View,):
+    for dc in (Resource, Request, Greeter, View):
         register_dataclass(registry, dc)
 
     # During bootstrap, make some Customers
@@ -66,10 +73,7 @@ def setup(registry: ServiceRegistry, datastore: Datastore):
 def sample_interactions(registry: ServiceRegistry) -> List[str]:
     """ Pretend to do a couple of customer interactions """
 
-    return [
-        process_request(registry, url)
-        for url in ('mary', 'henri')
-    ]
+    return [process_request(registry, url) for url in ('mary', 'henri')]
 
 
 def main():

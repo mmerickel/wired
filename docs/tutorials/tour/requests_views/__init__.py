@@ -25,7 +25,14 @@ from typing import List
 
 from wired import ServiceRegistry
 from .models import (
-    Customer, Datastore, Greeter, Resource, Request, Settings, Url, View
+    Customer,
+    Datastore,
+    Greeter,
+    Resource,
+    Request,
+    Settings,
+    Url,
+    View,
 )
 
 
@@ -38,6 +45,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
 
     # Import the add-on and initialize it
     from .custom import setup as addon_setup
+
     addon_setup(registry, settings)
 
     return registry
@@ -98,10 +106,7 @@ def process_request(registry: ServiceRegistry, url: str) -> str:
     container = registry.create_container()
 
     # Put the url into the container
-    container.set(url, Url)
-
-    # Create a Request using the factory
-    request = container.get(Request)
+    container.register_singleton(url, Url)
 
     # Create a View to generate the greeting
     view = container.get(View)
@@ -115,10 +120,7 @@ def process_request(registry: ServiceRegistry, url: str) -> str:
 def sample_interactions(registry: ServiceRegistry) -> List[str]:
     """ Pretend to do a couple of customer interactions """
 
-    return [
-        process_request(registry, url)
-        for url in ('mary', 'henri')
-    ]
+    return [process_request(registry, url) for url in ('mary', 'henri')]
 
 
 def main():

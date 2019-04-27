@@ -6,18 +6,6 @@ build-backend = "setuptools.build_meta"
 line-length = 79
 skip-string-normalization = true
 py36 = false
-exclude = '''
-/(
-    \.git
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | \.pytest_cache
-  | dist
-  | build
-  | docs
-)/
-'''
 
  # This next section only exists for people that have their editors
 # automatically call isort, black already sorts entries on its own when run.

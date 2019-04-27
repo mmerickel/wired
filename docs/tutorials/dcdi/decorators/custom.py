@@ -9,7 +9,13 @@ from dataclasses import dataclass
 from wired import ServiceRegistry
 from .decorators import factory
 from .models import (
-    Customer, Greeter, Request, Resource, Datastore, Settings, View,
+    Customer,
+    Greeter,
+    Request,
+    Resource,
+    Datastore,
+    Settings,
+    View,
 )
 from .utils import injected
 
@@ -38,7 +44,10 @@ class FrenchView:
     greeting: str = injected(Greeter, attr='greeting')
 
     def __call__(self) -> str:
-        return f'{self.url} and FrenchView: {self.greeting} {self.customer_title} {self.settings.punctuation}'
+        return (
+            f'{self.url} and FrenchView: {self.greeting} '
+            f'{self.customer_title} {self.settings.punctuation}'
+        )
 
 
 def setup(registry: ServiceRegistry, datastore: Datastore):

@@ -81,12 +81,15 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
 
     # Import the add-on and initialize it
     from .custom import setup as addon_setup
+
     addon_setup(registry, settings)
 
     return registry
 
 
-def customer_interaction(container: ServiceContainer, customer: Customer) -> str:
+def customer_interaction(
+    container: ServiceContainer, customer: Customer
+) -> str:
     """ Customer comes in, handle the steps in greeting them """
 
     # Get a Greeter using the customer as context. Use the Customer when
