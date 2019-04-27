@@ -13,7 +13,7 @@ requires = ['zope.interface']
 
 docs_require = ['Sphinx', 'sphinx_rtd_theme']
 
-tests_require = ['pytest', 'pytest-cov']
+tests_require = ['pytest', 'pytest-cov', 'sybil']
 
 setup(
     name='wired',
