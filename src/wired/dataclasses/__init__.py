@@ -17,19 +17,22 @@ TODO
 
 - TODO figure out backport of dataclasses
 
-- TODO for_ allows not inheriting in order to get matches
+- TODO ``for_`` allows not inheriting in order to get matches
 
 """
 
+from .decorators import factory, singleton
 from .field_types import InjectedArgumentException, injected
 from .injector import Injector
 from .models import Context
+from .registration import register_dataclass
 
 __all__ = [
+    factory,
     InjectedArgumentException,
     injected,
     Injector,
     Context,
+    register_dataclass,
+    singleton
 ]
-
-
