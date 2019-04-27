@@ -4,16 +4,19 @@ import pytest
 import venusian
 
 from wired import ServiceRegistry
-from wired.dataclasses import factory
+from wired.dataclasses import factory, injected
 
 
-@factory()
+class Context:
+    """ Just a marker """
+    pass
+
+
 @dataclass
 class Customer:
     name: str = 'Fred'
 
 
-@factory()
 @dataclass
 class FrenchCustomer:
     name: str = 'Anne'
@@ -31,7 +34,7 @@ def registry():
 @factory()
 @dataclass
 class Greeter:
-    customer: Customer
+    customer: Customer = injected(Context)
     name: str = 'Mary'
 
     def __call__(self):
@@ -42,7 +45,7 @@ class Greeter:
 @factory(for_=Greeter, context=FrenchCustomer)
 @dataclass
 class FrenchGreeter:
-    customer: FrenchCustomer
+    customer: FrenchCustomer = injected(Context)
     name: str = 'Henri'
 
     def __call__(self):
@@ -53,15 +56,19 @@ class FrenchGreeter:
 @pytest.fixture
 def greeter(registry) -> Greeter:
     container = registry.create_container()
-    context = Customer()
-    return container.get(Greeter, context=context)
+    customer = Customer()
+    # Register this in the container as the "context"
+    container.register_singleton(customer, Context)
+    return container.get(Greeter, context=customer)
 
 
 @pytest.fixture
 def french_greeter(registry) -> Greeter:
     container = registry.create_container()
-    context = FrenchCustomer()
-    return container.get(Greeter, context=context)
+    french_customer = FrenchCustomer()
+    # Register this in the container as the "context"
+    container.register_singleton(french_customer, Context)
+    return container.get(Greeter, context=french_customer)
 
 
 def test_greeter(greeter: Greeter):

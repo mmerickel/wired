@@ -1,3 +1,5 @@
+.. skip: start
+
 =======================
 Decorators, Simple Case
 =======================

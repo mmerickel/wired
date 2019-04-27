@@ -14,5 +14,8 @@ if sys.version_info >= (3, 7):
             skip
         ],
         pattern='index.rst',
-        excludes=['docs/tutorials/dcdi/* ']
+        excludes=[
+            'docs/tutorials/dcdi/*',
+            'docs/dataclasses/*'
+        ]
     ).pytest()
