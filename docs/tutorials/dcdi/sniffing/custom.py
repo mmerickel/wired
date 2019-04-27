@@ -25,15 +25,13 @@ class FrenchGreeter(Greeter):
     greeting: str = 'Bonjour'
 
 
-def setup(registry: ServiceRegistry):
+def setup(registry: ServiceRegistry, datastore: Datastore):
     register_dataclass(
         registry,
         FrenchGreeter, Greeter,
         context=FrenchCustomer
     )
 
-    # Grab the Datastore and add a FrenchCustomer
-    container = registry.create_container()
-    datastore: Datastore = container.get(Datastore)
+    # Add a FrenchCustomer to the datastore
     henri = FrenchCustomer(name='henri', title='Henri')
     datastore.customers['henri'] = henri

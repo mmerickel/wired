@@ -38,22 +38,22 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     # get to them.
     registry.register_singleton(settings, Settings)
 
+    # Make and register the Datastore singleton
+    datastore = Datastore()
+    registry.register_singleton(datastore, Datastore)
+
     # Do setup for the core application features
-    setup(registry)
+    setup(registry, datastore)
 
     # Import the add-on and initialize it
     from .custom import setup as addon_setup
-    addon_setup(registry)
+    addon_setup(registry, datastore)
 
     return registry
 
 
-def setup(registry: ServiceRegistry):
+def setup(registry: ServiceRegistry, datastore: Datastore):
     """ Initialize the features in the core application  """
-
-    # Make and register the Datastore singleton
-    datastore = Datastore()
-    registry.register_singleton(datastore, Datastore)
 
     for dc in (Resource, Request, Greeter, View,):
         register_dataclass(registry, dc)

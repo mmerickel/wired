@@ -24,8 +24,8 @@ Simple wired application:
 from typing import List
 
 import venusian
-from wired import ServiceRegistry, ServiceContainer
 
+from wired import ServiceRegistry, ServiceContainer
 from .models import (
     Customer, Datastore, Greeter, Resource, Request, Settings, Url, View
 )
@@ -52,26 +52,27 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     from . import models
     scanner.scan(models)
 
+    # Grab the datastore to pass into setup
+    datastore: Datastore = container.get(Datastore)
+
     # Do setup for the core application features
-    setup(registry)
+    setup(registry, datastore)
 
     # Import the add-on and initialize it
     from . import custom
     scanner.scan(custom)
-    custom.setup(registry)
+    custom.setup(registry, datastore)
 
     return registry
 
 
-def setup(registry: ServiceRegistry):
+def setup(registry: ServiceRegistry, datastore: Datastore):
     """ Initialize the features in the core application  """
 
     for dc in (Resource, Request,):
         register_dataclass(registry, dc)
 
     # During bootstrap, make some Customers
-    container = registry.create_container()
-    datastore: Datastore = container.get(Datastore)
     mary = Customer(name='mary', title='Mary')
     datastore.customers['mary'] = mary
 

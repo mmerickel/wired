@@ -31,7 +31,7 @@ Along the way, we did some refactoring:
 
 - We make the settings available in the container as a singleton
 
-- We then drop them from the add-ons "setup" protocol, since add-ons can get the settings from the container if they want them
+- We then drop them from the add-ons "setup" protocol, since add-ons can get the settings from the registry if they want them
 
 - Moved some framework-y parts to a ``utils.py`` file, so that ``__init__.py`` is easier to reason about
 
