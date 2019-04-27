@@ -18,6 +18,7 @@ def registry(settings):
     r: ServiceRegistry = app_bootstrap(settings)
     return r
 
+
 @pytest.mark.skip
 def test_sample_interactions(registry):
     from tutorials.dcdi.decorators import sample_interactions

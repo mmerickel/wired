@@ -19,7 +19,6 @@ def registry(settings):
     return r
 
 
-@pytest.mark.skip
 def test_sample_interactions(registry):
     from tutorials.dcdi.attributes import sample_interactions
 

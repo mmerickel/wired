@@ -14,7 +14,7 @@ def process_request(registry: ServiceRegistry, url_value: str) -> str:
 
     # Put the url into the container
     url = Url(value=url_value)
-    container.set(url, Url)
+    container.register_singleton(url, Url)
 
     # Create a View to generate the greeting
     view = container.get(View)
