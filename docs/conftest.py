@@ -6,13 +6,13 @@ from sybil.parsers.codeblock import CodeBlockParser
 from sybil.parsers.doctest import DocTestParser, FIX_BYTE_UNICODE_REPR
 from sybil.parsers.skip import skip
 
-if sys.version_info >= (3, 6):
+if sys.version_info >= (3, 7):
+    # Only use Sybil if we are in a tox that is 3.7 or higher.
     pytest_collect_file = Sybil(
         parsers=[
             DocTestParser(optionflags=ELLIPSIS | FIX_BYTE_UNICODE_REPR),
             CodeBlockParser(future_imports=['print_function']),
             skip
         ],
-        pattern='index.rst',
-        excludes=['docs/tutorials/dcdi/* ']
+        pattern='index.rst'
     ).pytest()
