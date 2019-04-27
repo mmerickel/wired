@@ -38,9 +38,6 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     # Make the registry
     registry = ServiceRegistry()
 
-    # Make a container to use during the initialization phase
-    container: ServiceContainer = registry.create_container()
-
     # Store the settings in the registry so things later can
     # get to them.
     registry.register_singleton(settings, Settings)
@@ -52,7 +49,8 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     from . import models
     scanner.scan(models)
 
-    # Grab the datastore to pass into setup
+    # Grab the datastore singleton to pass into setup
+    container: ServiceContainer = registry.create_container()
     datastore: Datastore = container.get(Datastore)
 
     # Do setup for the core application features
