@@ -1,6 +1,6 @@
 from venusian import attach, Scanner
-from wired import ServiceRegistry
 
+from wired import ServiceRegistry
 from .utils import register_dataclass
 
 

@@ -47,7 +47,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
 
     # Scan for registrations
     scanner = venusian.Scanner(
-        registry=registry, settings=settings, container=container
+        registry=registry, settings=settings
     )
     from . import models
     scanner.scan(models)
