@@ -63,7 +63,7 @@ Imagine an application where customers walk in the door and you want a `Greeter`
             self.greeting = greeting
 
         def __call__(self):
-            return f'{self.greeting} !!'
+            return self.greeting + ' !!'
 
 We are writing a pluggable application which has a "registry" which processes operations in a "container":
 
