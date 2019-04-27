@@ -28,7 +28,7 @@ def process_request(registry: ServiceRegistry, url_value: str) -> str:
     return response
 
 
-def injector_construction(container: ServiceContainer, target, context):
+def injector_construction(container: ServiceContainer, target):
     """ Introspect dataclass and get arguments from container """
 
     from .models import Resource, Url, Settings
@@ -57,7 +57,7 @@ def injector_construction(container: ServiceContainer, target, context):
         if field_type == ServiceContainer:
             # Doing this style of bailing out quickly for performance
             # reasons. Don't want to keep doing "if", though it
-            # means some repeititions.
+            # means some repetitions.
             args[field_name] = container
             continue
 
@@ -120,7 +120,7 @@ def register_dataclass(
     else:
         # Use a generic dataclass factory
         def dataclass_factory(c: ServiceContainer):
-            instance = injector_construction(c, target, context=context)
+            instance = injector_construction(c, target)
             return instance
 
     registry.register_factory(dataclass_factory, for_, context=context)

@@ -25,7 +25,7 @@ def process_request(registry: ServiceRegistry, url_value: str) -> str:
     return response
 
 
-def injector_construction(container: ServiceContainer, target, context):
+def injector_construction(container: ServiceContainer, target):
     """ Introspect dataclass and get arguments from container """
 
     from .models import Resource, Url, Settings
@@ -125,7 +125,7 @@ def register_dataclass(registry: ServiceRegistry,
     else:
         # Use a generic dataclass factory
         def dataclass_factory(c: ServiceContainer):
-            instance = injector_construction(c, target, context=context)
+            instance = injector_construction(c, target)
             return instance
 
     registry.register_factory(dataclass_factory, for_, context=context)
