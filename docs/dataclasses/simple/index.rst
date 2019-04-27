@@ -55,4 +55,4 @@ Now your app can get instances from the container:
 >>> print(greeting)
 Hello Larry my name is Mary
 
-This was a very simple example: the ``Greeter`` needed nothing from its environment and thus, the only parts of "DI" used were construction of the dataclass instance.
+This was a very simple example: the ``Greeter`` needed nothing from its environment because the only field had a default value. Thus, the only parts of "DI" used were construction of the dataclass instance.

@@ -10,7 +10,7 @@
 
 
     decorators/index
-    default_values/index
+    simple_injection/index
     containers/index
     overrides/index
     injected/index

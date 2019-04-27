@@ -14,3 +14,13 @@ Dataclass default values to the rescue:
     class Greeter:
         greeting: str = 'Hello'
 
+
+Shows:
+
+- Greeter.name from before
+
+- Passing a value into the __call__, as before
+
+- Greeter.punctuation, which is injected since...
+
+- Punctuation is registered
