@@ -1,3 +1,5 @@
+.. skip: start
+
 ==================
 Dataclasses and DI
 ==================

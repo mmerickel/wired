@@ -83,7 +83,6 @@ As part of application setup, stuff gets put in the app's registry.  This applic
 Here is a function that greets a customer as part of a "container" operation:
 
 .. code-block:: python
-For a deeper introduction, try :doc:`the Tour of Wired tutorial <./tutorials/tour/index>`.
 
     def greet_a_customer(container):
 
@@ -99,6 +98,8 @@ The app processes a customer by making a container and doing the operation:
 >>> greeting = greet_a_customer(container)
 >>> print(greeting)
 Hello !!
+
+For a deeper introduction, try :doc:`the Tour of Wired tutorial <./tutorials/tour/index>`.
 
 More Information
 ================
