@@ -5,7 +5,7 @@ from wired import ServiceRegistry
 
 @pytest.fixture
 def settings():
-    from requests_views import Settings
+    from tutorials.tour.overrides.models import Settings
 
     settings = Settings(punctuation='!!')
     return settings
@@ -13,15 +13,15 @@ def settings():
 
 @pytest.fixture
 def registry(settings):
-    from requests_views import app_bootstrap
+    from tutorials.tour.overrides import app_bootstrap
 
     r: ServiceRegistry = app_bootstrap(settings)
     return r
 
 
 def test_sample_interactions(registry):
-    from requests_views import sample_interactions
+    from tutorials.tour.overrides import sample_interactions
 
     greetings = sample_interactions(registry)
-    assert 'Hello Mary !!' == greetings[0]
+    assert 'Override Mary !!' == greetings[0]
     assert 'Bonjour Henri !!' == greetings[1]

@@ -5,7 +5,7 @@ from wired import ServiceRegistry
 
 @pytest.fixture
 def settings():
-    from decoupled import Settings
+    from tutorials.tour.decoupled import Settings
 
     settings = Settings(punctuation='!!')
     return settings
@@ -13,7 +13,7 @@ def settings():
 
 @pytest.fixture
 def registry(settings):
-    from decoupled import setup
+    from tutorials.tour.decoupled import setup
 
     r: ServiceRegistry = setup(settings)
     return r
@@ -21,27 +21,27 @@ def registry(settings):
 
 @pytest.fixture
 def default_customer():
-    from decoupled import Customer
+    from tutorials.tour.decoupled import Customer
 
     return Customer(name='Mary')
 
 
 @pytest.fixture
 def french_customer():
-    from decoupled.custom import FrenchCustomer
+    from tutorials.tour.decoupled.custom import FrenchCustomer
 
     return FrenchCustomer(name='Henri')
 
 
 def test_greet_customer(registry, default_customer):
-    from decoupled import greet_customer
+    from tutorials.tour.decoupled import greet_customer
 
     actual = greet_customer(registry, default_customer)
     assert 'Hello Mary !!' == actual
 
 
 def test_greet_french_customer(registry, french_customer):
-    from decoupled import greet_customer
+    from tutorials.tour.decoupled import greet_customer
 
     actual = greet_customer(registry, french_customer)
     assert 'Bonjour Henri !!' == actual
