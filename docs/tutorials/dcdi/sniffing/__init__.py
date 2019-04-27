@@ -44,16 +44,16 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     container: ServiceContainer = registry.create_container()
 
     # Do setup for the core application features
-    setup(registry, container)
+    setup(registry)
 
     # Import the add-on and initialize it
     from .custom import setup as addon_setup
-    addon_setup(registry, container)
+    addon_setup(registry)
 
     return registry
 
 
-def setup(registry: ServiceRegistry, container: ServiceContainer):
+def setup(registry: ServiceRegistry):
     """ Initialize the features in the core application  """
 
     # Make and register the Datastore singleton
@@ -65,10 +65,7 @@ def setup(registry: ServiceRegistry, container: ServiceContainer):
         registry.register_factory(target.factory, target)
 
     # Register dataclass factories (automated sniffing)
-    register_dataclass(
-        registry, container,
-        Greeter, Greeter
-    )
+    register_dataclass(registry, Greeter, Greeter)
 
     # During bootstrap, make some Customers
     mary = Customer(name='mary', title='Mary')

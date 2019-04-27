@@ -23,7 +23,7 @@ Simple wired application:
 """
 from typing import List
 
-from wired import ServiceRegistry, ServiceContainer
+from wired import ServiceRegistry
 from .models import (
     Customer, Datastore, Greeter, Resource, Request, Settings, Url, View
 )
@@ -38,20 +38,17 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     # get to them.
     registry.register_singleton(settings, Settings)
 
-    # Make a container to use during the initialization phase
-    container: ServiceContainer = registry.create_container()
-
     # Do setup for the core application features
-    setup(registry, container)
+    setup(registry)
 
     # Import the add-on and initialize it
     from .custom import setup as addon_setup
-    addon_setup(registry, container)
+    addon_setup(registry)
 
     return registry
 
 
-def setup(registry: ServiceRegistry, container: ServiceContainer):
+def setup(registry: ServiceRegistry):
     """ Initialize the features in the core application  """
 
     # Make and register the Datastore singleton
@@ -59,7 +56,7 @@ def setup(registry: ServiceRegistry, container: ServiceContainer):
     registry.register_singleton(datastore, Datastore)
 
     for dc in (Resource, Request, Greeter, View,):
-        register_dataclass(registry, container, dc)
+        register_dataclass(registry, dc)
 
     # During bootstrap, make some Customers
     mary = Customer(name='mary', title='Mary')

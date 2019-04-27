@@ -105,7 +105,6 @@ def register_dataclass(
         target,
         for_=None,
         context=None,
-        container: ServiceContainer = None,
 ):
     """ Generic injectory factory for dataclasses """
 

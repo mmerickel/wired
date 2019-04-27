@@ -53,23 +53,24 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     scanner.scan(models)
 
     # Do setup for the core application features
-    setup(registry, container)
+    setup(registry)
 
     # Import the add-on and initialize it
     from . import custom
     scanner.scan(custom)
-    custom.setup(registry, container)
+    custom.setup(registry)
 
     return registry
 
 
-def setup(registry: ServiceRegistry, container: ServiceContainer):
+def setup(registry: ServiceRegistry):
     """ Initialize the features in the core application  """
 
     for dc in (Resource, Request,):
-        register_dataclass(registry, dc, container=container)
+        register_dataclass(registry, dc)
 
     # During bootstrap, make some Customers
+    container = registry.create_container()
     datastore: Datastore = container.get(Datastore)
     mary = Customer(name='mary', title='Mary')
     datastore.customers['mary'] = mary

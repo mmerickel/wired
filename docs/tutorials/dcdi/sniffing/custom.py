@@ -6,7 +6,7 @@ French Greeter.
 """
 from dataclasses import dataclass
 
-from wired import ServiceRegistry, ServiceContainer
+from wired import ServiceRegistry
 from .models import Customer, Greeter, Datastore
 from .utils import register_dataclass
 
@@ -25,14 +25,15 @@ class FrenchGreeter(Greeter):
     greeting: str = 'Bonjour'
 
 
-def setup(registry: ServiceRegistry, container: ServiceContainer):
+def setup(registry: ServiceRegistry):
     register_dataclass(
-        registry, container,
+        registry,
         FrenchGreeter, Greeter,
         context=FrenchCustomer
     )
 
     # Grab the Datastore and add a FrenchCustomer
+    container = registry.create_container()
     datastore: Datastore = container.get(Datastore)
     henri = FrenchCustomer(name='henri', title='Henri')
     datastore.customers['henri'] = henri

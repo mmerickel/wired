@@ -39,7 +39,6 @@ def injector_construction(container: ServiceContainer, target):
 
 
 def register_dataclass(registry: ServiceRegistry,
-                       container: ServiceContainer,
                        target,
                        for_,
                        context=None

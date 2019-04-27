@@ -33,8 +33,6 @@ Along the way, we did some refactoring:
 
 - We then drop them from the add-ons "setup" protocol, since add-ons can get the settings from the container if they want them
 
-- Instead, add an argument of container, used during app initialization
-
 - Moved some framework-y parts to a ``utils.py`` file, so that ``__init__.py`` is easier to reason about
 
 - Each factory function is moved to a ``staticmethod`` on the class that is being registered, simulating a decorator that could automate this
