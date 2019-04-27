@@ -23,7 +23,7 @@ Simple wired application:
 """
 from typing import List
 
-from wired import ServiceRegistry, ServiceContainer
+from wired import ServiceRegistry
 from .models import (
     Customer, Datastore, Greeter, Resource, Request, Settings, Url, View
 )
@@ -39,9 +39,6 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     # Store the settings in the registry so things later can
     # get to them.
     registry.register_singleton(settings, Settings)
-
-    # Make a container to use during the initialization phase
-    container: ServiceContainer = registry.create_container()
 
     # Do setup for the core application features
     setup(registry)
