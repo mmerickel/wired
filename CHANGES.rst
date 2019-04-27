@@ -1,3 +1,10 @@
+unreleased
+==========
+
+- Added a new tutorial on writing a DI framework around Python 3.7's
+  typed-dataclasses. Thanks Paul!
+  See https://github.com/mmerickel/wired/pull/16
+
 0.2 (2019-04-22)
 ================
 
@@ -19,6 +26,7 @@ Features
 - Edit docs to (a) improve sales pitch, (b) split into a couple of sub-pages,
   and (c) provide a tutorial. Update README and ``setup.py`` description a
   bit as well.
+  See https://github.com/mmerickel/wired/pull/6
 
 0.1.2 (2019-03-23)
 ==================
