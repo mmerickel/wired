@@ -24,13 +24,13 @@ class Punctuation:
 @factory()
 @dataclass
 class Greeter:
-    # container: ServiceContainer
+    container: ServiceContainer
     punctuation: str = field(init=False)
     name: str = 'Mary'
 
     def __post_init__(self):
-        # p: Punctuation = self.container.get(Punctuation)
-        self.punctuation = 'p.value'
+        p: Punctuation = self.container.get(Punctuation)
+        self.punctuation = p.value
 
     def __call__(self, customer):
         return f'Hello {customer} my name is {self.name} {self.punctuation}'

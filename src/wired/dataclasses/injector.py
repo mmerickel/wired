@@ -86,6 +86,12 @@ class Injector:
                 if field_default is not MISSING:
                     args[field_name] = field_default
                     continue
+                elif full_field.init is False:
+                    # Expect there to be a __post_init__ that assigns this value
+                    if not hasattr(target, '__post_init__'):
+                        msg = f'Field "{field_name}" has init=False but no __post_init__'
+                        raise LookupError(msg)
+                    continue
                 else:
                     msg = f'No default value on field {field_name}'
                     raise LookupError(msg)

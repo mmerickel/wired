@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 
 import pytest
@@ -168,6 +168,40 @@ def test_container(container, dummy_context):
     inj = Injector(container=container)
     result: Dummy = inj(Dummy, context=dummy_context)
     assert container == result.container
+
+
+def test_init_false(container, dummy_context):
+    # Use __post_init__ to initialize a field
+
+    @dataclass
+    class Dummy:
+        container: ServiceContainer
+        name: str = field(init=False)
+
+        def __post_init__(self):
+            self.name = 'initialized'
+
+    inj = Injector(container=container)
+    result: Dummy = inj(Dummy, context=dummy_context)
+    assert 'initialized' == result.name
+
+
+def test_init_false_missing_postinit(container, dummy_context):
+    # A field has init=False but the dataclass is missing a __post_init__
+
+    @dataclass
+    class Dummy:
+        container: ServiceContainer
+        name: str = field(init=False)
+
+        def __XXX_INIT__(self):
+            self.name = 'notinitialized'
+
+    inj = Injector(container=container)
+    with pytest.raises(LookupError) as exc:
+        result: Dummy = inj(Dummy, context=dummy_context)
+    expected = 'Field "name" has init=False but no __post_init__'
+    assert expected == str(exc.value)
 
 
 def test_injected_context(monkeypatch, container, dummy_context):
