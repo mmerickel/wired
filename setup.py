@@ -23,6 +23,7 @@ setup(
     ),
     version='0.2',
     long_description=readme + '\n\n' + changes,
+    long_description_content_type='text/x-rst',
     author='Michael Merickel',
     author_email='pylons-discuss@googlegroups.com',
     url='https://wired.readthedocs.io',
