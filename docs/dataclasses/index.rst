@@ -79,22 +79,6 @@ Not just the web framework (or Sphix) and the site application, but plugins.
 Passing around huge objects -- and worse, a ``g`` global of arbitrary structure -- is a code smell and makes test-writing hard.
 DI gives a much smaller surface area.
 
-
-TODO
-
-- Context
-
-- request/resource/view patterns
-
-- __call__
-
-- wired_factory
-
-- Collections aka queries
-
-- Caching
-
-
 Contents
 ========
 
