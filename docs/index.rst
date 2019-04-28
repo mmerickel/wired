@@ -109,7 +109,7 @@ More Information
 
    usage
    tutorials/index
-   dataclasses/index
+   dc/index
    api
    changes
 
