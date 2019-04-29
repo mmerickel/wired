@@ -9,6 +9,7 @@ By writing them bit-by-bit, we see the kinds of problems that ``wired`` is built
 
 
 .. toctree::
+    :maxdepth: 3
 
     tour/index
     dcdi/index
