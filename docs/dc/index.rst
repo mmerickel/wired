@@ -86,7 +86,7 @@ Usage
     :maxdepth: 1
 
     simple/index
-    decorators/index
+    decorators
     simple_injection/index
     containers/index
     overrides/index

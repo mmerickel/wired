@@ -12,33 +12,11 @@ Our previous example didn't do Dependency Injection (DI) which makes it pretty b
 
 Let's start with the one-time-only work in our "app", which bootstraps a registry and then looks for decorators:
 
-.. code-block:: python
-
-    import venusian
-    from wired import ServiceRegistry
-
-    def app_bootstrap():
-        registry = ServiceRegistry()
-        container = registry.create_container()
-        scanner = venusian.Scanner(registry=registry)
-        scanner.scan(__import__(__name__))
-
-        return container
+.. literalinclude:: ../../tests/dataclasses/integration/decorators/app.py
 
 Our ``Greeter`` dataclass can now register itself as a ``wired`` factory, using a decorator:
 
-.. code-block:: python
-
-    from dataclasses import dataclass
-    from wired.dataclasses import factory
-
-    @factory()
-    @dataclass
-    class Greeter:
-        name: str = 'Mary'
-
-        def __call__(self, customer):
-            return f'Hello {customer} my name is {self.name}'
+.. literalinclude:: ../../tests/dataclasses/integration/decorators/models.py
 
 We no longer need the call to the ``register_dataclass``, which needed the registry and the target class.
 The decorator knows the registry, knows the class being decorated, and can call ``register_dataclass``.
@@ -49,14 +27,9 @@ Now your app can get instances from the container:
 
 .. code-block:: python
 
-    def main():
+    # This happens at app startup
+    registry = make_registry()
 
-        container = app_bootstrap()
-        instance = container.get(Greeter)
-        greeting = instance('Larry')
-        print(greeting)
-
-Let's see if it works:
-
->>> main()
-Hello Larry my name is Mary
+    # This happens on each operation
+    result = process_request(registry)
+    assert 'Hello Larry my name is Mary' == result
