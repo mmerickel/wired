@@ -1,16 +1,15 @@
-import venusian
-
+# app.py
+from dataclasses import dataclass, field
+from venusian import Scanner
 from wired import ServiceRegistry
 
 
-def make_registry():
-    # Make a registry
-    registry = ServiceRegistry()
+@dataclass
+class App:
+    registry: ServiceRegistry = field(default_factory=ServiceRegistry)
 
-    # Scan for registrations, in this case, in "models.py"
-    scanner = venusian.Scanner(registry=registry)
-    import models
-    scanner.scan(models)
-
-    # Return the registry
-    return registry
+    def scan(self):
+        # Look for decorators
+        scanner = Scanner(registry=self.registry)
+        import models
+        scanner.scan(models)

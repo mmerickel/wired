@@ -1,5 +1,3 @@
-.. skip: start
-
 =======================
 Decorators, Simple Case
 =======================
@@ -8,28 +6,27 @@ Decorators, Simple Case
 
     Decorators depend on the ``venusian`` package being installed.
 
-Our previous example didn't do Dependency Injection (DI) which makes it pretty boring. But it saved us from writing a factory function. Let's see how decorators can also save us the ``register_dataclass`` registration step.
+Our previous example didn't do Dependency Injection (DI) which makes it pretty boring. But it saved us from writing a factory function. Let's rewrite it to see how decorators can also save us the ``register_dataclass`` registration step. Still no DI.
 
-Let's start with the one-time-only work in our "app", which bootstraps a registry and then looks for decorators:
+As before, we have an application with a registry. Let's add a method that looks for our ``wired.dataclasses`` decorators, using ``venusian``:
 
 .. literalinclude:: ../../tests/dataclasses/integration/decorators/app.py
+    :emphasize-lines: 11-15
 
 Our ``Greeter`` dataclass can now register itself as a ``wired`` factory, using a decorator:
 
 .. literalinclude:: ../../tests/dataclasses/integration/decorators/models.py
+    :emphasize-lines: 7
 
 We no longer need the call to the ``register_dataclass``, which needed the registry and the target class.
-The decorator knows the registry, knows the class being decorated, and can call ``register_dataclass``.
+The decorator knows the registry, knows the class being decorated, and can call ``register_dataclass``. Simple!
 
-As before, let's process an operation, this time with ``app_boostrap`` driving the decorator scanner:
+Our request processing is exactly the same as the previous step:
 
-Now your app can get instances from the container:
+.. literalinclude:: ../../tests/dataclasses/integration/decorators/request.py
 
-.. code-block:: python
+Putting it all together: make an app, scan for decorators, and process requests:
 
-    # This happens at app startup
-    registry = make_registry()
+.. literalinclude:: ../../tests/dataclasses/integration/decorators/test_integration_decorators.py
+    :start-after: start-after
 
-    # This happens on each operation
-    result = process_request(registry)
-    assert 'Hello Larry my name is Mary' == result

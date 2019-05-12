@@ -20,7 +20,7 @@ If we were using ``wired`` directly, we would have to define a factory function 
 
 .. code-block:: python
 
-    # NO LONGER NEED THIS
+    # NO LONGER NEED THIS, wired.dataclasses makes a factory
     def greeter_factory(container):
         greeter = Greeter()
         return greeter
