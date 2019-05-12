@@ -6,8 +6,8 @@
 .. toctree::
     :maxdepth: 1
 
-    simple/index
-    decorators/index
+    simple_construction
+    decorators
     simple_injection/index
     containers/index
     overrides/index

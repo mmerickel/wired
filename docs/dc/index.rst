@@ -79,19 +79,11 @@ Not just the web framework (or Sphix) and the site application, but plugins.
 Passing around huge objects -- and worse, a ``g`` global of arbitrary structure -- is a code smell and makes test-writing hard.
 DI gives a much smaller surface area.
 
-Usage
-=====
+Contents
+========
 
 .. toctree::
     :maxdepth: 1
 
-    simple/index
-    decorators
-    simple_injection/index
-    containers/index
-    overrides/index
-    injected/index
-    attributes/index
-    custom_factories/index
-    transitive_injection/index
+    usage
     API <api>
