@@ -9,7 +9,7 @@
     simple_construction
     decorators
     simple_injection
-    overrides/index
+    overrides
     injected/index
     attributes/index
     containers/index
