@@ -7,7 +7,7 @@ def process_request(registry):
     container = registry.create_container()
 
     # Do the work unique to this request and return result
-    instance = container.get(Greeter)
-    greeting = instance('Larry')
+    greeter: Greeter = container.get(Greeter)
+    greeting = greeter('Larry')
 
     return greeting

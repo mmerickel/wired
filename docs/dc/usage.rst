@@ -8,10 +8,10 @@
 
     simple_construction
     decorators
-    simple_injection/index
-    containers/index
+    simple_injection
     overrides/index
     injected/index
     attributes/index
+    containers/index
     custom_factories/index
     transitive_injection/index
