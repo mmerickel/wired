@@ -40,8 +40,8 @@ class Context:
 @dataclass
 class Greeter:
     """ A basic greeter """
-    customer_name: str = injected(Context, attr='name')
+    customer: Customer = injected(Context)
     name: str = 'Mary'
 
     def __call__(self):
-        return f'Hello {self.customer_name} my name is {self.name}'
+        return f'Hello {self.customer.name} my name is {self.name}'
