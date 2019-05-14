@@ -12,6 +12,6 @@
     overrides
     custom_factories
     injected
-    attributes/index
+    attributes
     containers/index
     transitive_injection/index

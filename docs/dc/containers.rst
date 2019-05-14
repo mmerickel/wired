@@ -1,5 +1,5 @@
-Containers
-==========
+Containers and ``__post_init__``
+================================
 
 Dataclass DI is usually done in the course of processing a unit of work, which usually means in a container.
 Maybe you want to grab the container, then use ``__post_init__`` to pluck something out of the container:
