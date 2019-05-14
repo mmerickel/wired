@@ -29,3 +29,7 @@ Here is what ``wired.dataclasses`` actually does behind the scenes:
 
 Using ``injected`` with an argument is easier on the eyes.
 The ``injected`` field uses the ``metadata`` support in dataclass fields to make a custom protocol, giving special instructions to the DI system on how to construct the dataclass.
+
+.. note::
+
+    ``attr`` isn't the only argument you can add to ``injected``. ``key=`` also works for dictionary access.

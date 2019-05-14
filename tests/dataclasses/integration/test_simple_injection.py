@@ -37,7 +37,7 @@ def greeter(registry) -> Greeter:
     return container.get(Greeter)
 
 
-def test_greeter(greeter):
+def test_greeter(greeter: Greeter):
     greeting = greeter('Larry')
     assert 'Hello Larry my name is Mary !!' == greeting
 

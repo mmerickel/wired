@@ -13,5 +13,3 @@
     custom_factories
     injected
     attributes
-    containers/index
-    transitive_injection/index
