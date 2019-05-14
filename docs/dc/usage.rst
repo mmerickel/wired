@@ -10,8 +10,8 @@
     decorators
     simple_injection
     overrides
-    injected/index
+    custom_factories
+    injected
     attributes/index
     containers/index
-    custom_factories/index
     transitive_injection/index
