@@ -1,3 +1,5 @@
+.. skip: start
+
 ===================
 Simple Construction
 ===================

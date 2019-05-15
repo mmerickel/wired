@@ -10,7 +10,7 @@ Let's put that to work to decrease the surface area between the dataclass and th
 
 We'll change three lines in ``models.py`` and nothing else:
 
-.. literalinclude:: ../../tests/dataclasses/integration/attributes/models.py
+.. literalinclude:: models.py
     :emphasize-lines: 43, 46-47
 
 Instead of storing the ``Customer`` and later getting the customer's name, we use ``attr`` to get just the ``name`` off the ``Context``.
