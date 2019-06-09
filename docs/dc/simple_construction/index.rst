@@ -29,9 +29,7 @@ If we were using ``wired`` directly, we would have to define a factory function 
 
     registry.register_factory(greeter_factory, Greeter)
 
-But with ``wired.dataclasses``, no factory function is needed, as `wired.dataclasses` makes a factory for you:
-
-.. literalinclude:: configure.py
+But with ``wired.dataclasses``, no factory function is needed, as `wired.dataclasses` makes a factory for you
 
 .. note::
 
