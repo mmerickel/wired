@@ -2,6 +2,8 @@
 
 TODO
 
+- TODO ``for_`` allows not inheriting in order to get matches
+
 - Unit testing
 
 - register_singleton and make the simplest test using it
@@ -17,9 +19,7 @@ TODO
 
 - Request/View/Context/Datastore pattern
 
-- TODO ``for_`` allows not inheriting in order to get matches
-
-- TODO Change factory() to factory()
+- TODO Change factory() to factory
 
 - TODO Document @singleton
 
