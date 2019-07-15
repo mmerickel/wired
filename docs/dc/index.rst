@@ -74,7 +74,7 @@ For example, views accept a single argument -- ``request`` -- which has a rather
 Wouldn't it be nice if all you had to do was ask for what you wanted, and they system was responsible for providing it?
 This makes for far-less-coupled systems.
 Especially systems with more than two parties.
-Not just the web framework (or Sphix) and the site application, but plugins.
+Not just the web framework (or Sphinx) and the site application, but plugins.
 
 Passing around huge objects -- and worse, a ``g`` global of arbitrary structure -- is a code smell and makes test-writing hard.
 DI gives a much smaller surface area.
