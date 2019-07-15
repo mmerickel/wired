@@ -63,7 +63,7 @@ class Injector:
                 injected_attr = injected_info.get('attr')
                 injected_type = injected_info['type_']
                 # Ask the registry for one of these
-                injected_target = container.get(injected_type, context=context)
+                injected_target = container.get(injected_type)
 
                 # If attr is used, get specified attribute off that instance
                 if injected_attr:
@@ -75,7 +75,7 @@ class Injector:
 
             # Now the general case, something like url: Url
             try:
-                field_value = container.get(field_type, context=context)
+                field_value = container.get(field_type)
                 args[field_name] = field_value
             except TypeError:
                 # Seems that wired, when looking up str, gives:
