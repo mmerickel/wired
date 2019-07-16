@@ -30,7 +30,10 @@ What's important here is this line:
 
 This registers a dataclass to be used as the ``Greeter`` for the case when the ``context`` is a ``FrenchCustomer``.
 
-Now our request processing needs to handle two cases, the second of which we pass in a context which is a ``FrenchCustomer``:
+Let's change our scenario to process two requests, meaning two customers.
+In the first request the customer is a ``Customer``.
+In the second, the customer is a ``FrenchCustomer``.
+In both cases, we make a container for the request that sets the container's context to the customer instance.
 
 .. literalinclude:: request.py
     :emphasize-lines: 16
@@ -40,4 +43,4 @@ To finish, we change our ``assert`` to test two cases:
 .. literalinclude:: ../../../tests/dataclasses/integration/test_dc_overrides.py
     :start-after: start-after
 
-With this, whenever the system asks for a ``Greeter``, if the current context is a ``FrenchCustomer``, they'll get ``FrenchGreeter`` instead of a plain ``Greeter``.
+With this, whenever the system asks for a ``Greeter``, if the container's current context is a ``FrenchCustomer``, they'll get ``FrenchGreeter`` instead of a plain ``Greeter``.
