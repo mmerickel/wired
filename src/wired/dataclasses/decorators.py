@@ -27,7 +27,7 @@ class singleton:
             for_ = self.for_ if self.for_ else cls
             registry.register_singleton(instance, for_)
 
-        attach(wrapped, callback)
+        attach(wrapped, callback, category='wired')
         return wrapped
 
 
@@ -55,5 +55,5 @@ class factory:
                 context=self.context
             )
 
-        attach(wrapped, callback)
+        attach(wrapped, callback, category='wired')
         return wrapped
