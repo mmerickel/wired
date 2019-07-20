@@ -2,7 +2,7 @@
 Singletons
 ==========
 
-We :doc:`just used <../simple_injection>` ``wired.dataclasses`` to register a ``wired`` factory -- in that case, ``Settings`` -- that was then used later.
+We :doc:`just used <../simple_injection/index>` ``wired.dataclasses`` to register a ``wired`` factory -- in that case, ``Settings`` -- that was then used later.
 Let's do the exact same thing, but with a ``wired`` *singleton*.
 
 Let's change our ``Settings`` to a singleton but changing the ``factory`` decorator to ``singleton``:
