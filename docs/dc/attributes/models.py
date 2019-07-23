@@ -1,47 +1,49 @@
 # models.py
 from dataclasses import dataclass
 
-from wired.dataclasses import factory, injected
+from wired.dataclasses import factory, injected, Context
 
 
+@factory()
 @dataclass
-class Request:
-    """ The app makes one of these and puts into the container """
-    url: str
+class Settings:
+    """ Store some configuration settings for the app """
+    punctuation: str = '.'
 
 
 @dataclass
 class Customer:
     """ A basic customer """
-    name: str
+    name: str = 'Larry'
 
 
-CUSTOMERS = dict(
-    larry=Customer(name='Larry'),
-    anne=Customer(name='Anne')
-)
-
-
-@factory()
 @dataclass
-class Context:
-    """ Use request.url to retrieve a customer from the database """
-
-    request: Request
-
-    @classmethod
-    def wired_factory(cls, container):
-        request = container.get(Request)
-        customer = CUSTOMERS.get(request.url)
-        return customer
+class FrenchCustomer:
+    """ A certain kind of customer """
+    name: str = 'Anne'
 
 
-@factory()
+@factory(context=Customer)
 @dataclass
 class Greeter:
     """ A basic greeter """
+    settings: Settings
     customer_name: str = injected(Context, attr='name')
     name: str = 'Mary'
 
     def __call__(self):
-        return f'Hello {self.customer_name} my name is {self.name}'
+        punctuation = self.settings.punctuation
+        return f'Hello {self.customer_name} my name is {self.name}{punctuation}'
+
+
+@factory(for_=Greeter, context=FrenchCustomer)
+@dataclass
+class FrenchGreeter:
+    """ A greeter to use when the customer (context) is French """
+    settings: Settings
+    customer_name: str = injected(Context, attr='name')
+    name: str = 'Henri'
+
+    def __call__(self):
+        punctuation = self.settings.punctuation
+        return f'Salut {self.customer_name} je m\'apelle {self.name}{punctuation}'

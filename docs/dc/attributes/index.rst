@@ -8,13 +8,14 @@ Now the fun begins.
 The ``injected`` field uses metadata to give more instructions to the DI system.
 Let's put that to work to decrease the surface area between the dataclass and the system by getting just what we need off of ``Customer``.
 
-We'll change three lines in ``models.py`` and nothing else:
+We'll change 4 lines in ``models.py`` and nothing else:
 
 .. literalinclude:: models.py
-    :emphasize-lines: 43, 46-47
+    :emphasize-lines: 31, 36, 44, 49
 
 Instead of storing the ``Customer`` and later getting the customer's name, we use ``attr`` to get just the ``name`` off the ``Context``.
 The dataclass then has ``customer_name: str`` as its constructed field, which is the only thing needed in the "template".
+Smaller surface are against the outside world.
 
 Here is what ``wired.dataclasses`` actually does behind the scenes:
 
