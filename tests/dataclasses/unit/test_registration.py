@@ -2,24 +2,15 @@ from dataclasses import dataclass
 from typing import Callable, Optional, Any
 
 import pytest
-from wired import ServiceRegistry, ServiceContainer
-from wired.dataclasses import Context
-from wired.dataclasses.registration import register_dataclass
 from zope.interface import Interface
+
+from wired import ServiceRegistry
+from wired.dataclasses.registration import register_dataclass
 
 
 @dataclass
 class DummyGreeter:
     name: str = 'dummy_greeter'
-
-
-@dataclass
-class DummyWiredGreeter:
-    name: str = 'dummy_greeter'
-
-    @classmethod
-    def wired_factory(cls, container: ServiceContainer):
-        return DummyGreeter(name='dummy_wired_greeter')
 
 
 @dataclass
@@ -67,18 +58,9 @@ def test_basic(dummy_registry: DummyRegistry, container):
     assert 'dummy_greeter' == instance.name
 
 
-def test_wired_factory(dummy_registry: DummyRegistry):
-    register_dataclass(dummy_registry, DummyWiredGreeter)
-    assert DummyWiredGreeter == dummy_registry.iface_or_type
-    factory = dummy_registry.factory
-    instance: DummyWiredGreeter = factory(container)
-    assert 'dummy_wired_greeter' == instance.name
-
-
 def test_for(dummy_registry: DummyRegistry, container):
     register_dataclass(
         dummy_registry,
-        DummyWiredGreeter,
-        for_=DummyGreeter
+        DummyGreeter,
     )
     assert DummyGreeter == dummy_registry.iface_or_type

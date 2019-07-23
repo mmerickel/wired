@@ -13,4 +13,3 @@
     overrides/index
     injected/index
     attributes/index
-    custom_factories/index

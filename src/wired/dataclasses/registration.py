@@ -15,14 +15,10 @@ def register_dataclass(
     if for_ is None:
         for_ = target
 
-    if getattr(target, 'wired_factory', None):
-        # This class wants to control its factory, use that one
-        dataclass_factory = target.wired_factory
-    else:
-        # Use a generic dataclass factory
-        def dataclass_factory(container: ServiceContainer):
-            injector = Injector(container=container)
-            instance = injector(target)
-            return instance
+    # Use a generic dataclass factory
+    def dataclass_factory(container: ServiceContainer):
+        injector = Injector(container=container)
+        instance = injector(target)
+        return instance
 
     registry.register_factory(dataclass_factory, for_, context=context)
