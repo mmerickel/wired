@@ -1,3 +1,3 @@
 class Context:
-    """ Marker interface for lookups by request context """
+    """ Marker sentinel for telling injector to give container.context """
     pass
