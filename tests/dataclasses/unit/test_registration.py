@@ -23,8 +23,14 @@ class DummyWiredGreeter:
 
 
 @dataclass
-class DummyContext(Context):
-    pass
+class DummyCustomer:
+    """ Use this as a context in the container """
+    name: str = 'dummy_customer'
+
+
+@pytest.fixture
+def dummy_customer():
+    return DummyCustomer()
 
 
 @dataclass
@@ -53,30 +59,23 @@ def container():
     return container
 
 
-@pytest.fixture
-def dummy_context():
-    return DummyContext()
-
-
-def test_basic(dummy_registry: DummyRegistry, container, dummy_context):
-    register_dataclass(dummy_registry, DummyGreeter, context=dummy_context)
+def test_basic(dummy_registry: DummyRegistry, container):
+    register_dataclass(dummy_registry, DummyGreeter)
     assert DummyGreeter == dummy_registry.iface_or_type
     factory = dummy_registry.factory
     instance: DummyGreeter = factory(container)
     assert 'dummy_greeter' == instance.name
 
 
-def test_wired_factory(dummy_registry: DummyRegistry,
-                       container, dummy_context):
-    register_dataclass(dummy_registry, DummyWiredGreeter,
-                       context=dummy_context)
+def test_wired_factory(dummy_registry: DummyRegistry):
+    register_dataclass(dummy_registry, DummyWiredGreeter)
     assert DummyWiredGreeter == dummy_registry.iface_or_type
     factory = dummy_registry.factory
     instance: DummyWiredGreeter = factory(container)
     assert 'dummy_wired_greeter' == instance.name
 
 
-def test_for(dummy_registry: DummyRegistry, container, dummy_context):
+def test_for(dummy_registry: DummyRegistry, container):
     register_dataclass(
         dummy_registry,
         DummyWiredGreeter,

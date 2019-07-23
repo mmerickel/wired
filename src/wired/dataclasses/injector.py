@@ -14,10 +14,10 @@ class Injector:
     def __call__(self,
                  target,
                  singletons: Optional[Tuple] = (),
-                 context: Optional[Context] = None
                  ):
 
         container = self.container
+        context = container.context
 
         # Don't need to construct this target from a dataclass,
         # it's a singleton instance already in the container
@@ -27,14 +27,6 @@ class Injector:
 
         # Make the args dict that we will construct dataclass with
         args = {}
-
-        # If not passed in, get the context from the container
-        if context is None:
-            try:
-                context: Context = container.get(Context)
-            except LookupError:
-                # It's ok to have context=None
-                pass
 
         # Iterate through the dataclass fields
         # Because fields() gives a string for the type, instead of the
@@ -47,7 +39,7 @@ class Injector:
             # Doing this style of bailing out quickly for performance
             # reasons. Don't want to keep doing "if", though it
             # means some repetitions.
-            if field_type == ServiceContainer:
+            if field_type is ServiceContainer:
                 args[field_name] = container
                 continue
 
@@ -62,8 +54,16 @@ class Injector:
                 injected_info = full_field.metadata['injected']
                 injected_attr = injected_info.get('attr')
                 injected_type = injected_info['type_']
-                # Ask the registry for one of these
-                injected_target = container.get(injected_type)
+
+                # Another special case: if asked to inject Context or
+                # ServiceContainer, consider it like a sentinel and return it.
+                if injected_type is Context:
+                    injected_target = context
+                elif injected_type is ServiceContainer:
+                    injected_target = container
+                else:
+                    # Ask the registry for one of these
+                    injected_target = container.get(injected_type)
 
                 # If attr is used, get specified attribute off that instance
                 if injected_attr:
