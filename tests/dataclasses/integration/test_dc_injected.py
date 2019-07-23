@@ -9,5 +9,6 @@ def test_greeter():
     app.scan()
 
     # Later, a request comes in
-    result = process_request(app.registry, 'larry')
-    assert 'Hello Larry my name is Mary' == result
+    results = process_request(app.registry)
+    assert 'Hello Billy my name is Mary.' == results[0]
+    assert 'Salut Sophie je m\'apelle Henri.' == results[1]

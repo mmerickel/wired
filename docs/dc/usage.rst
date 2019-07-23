@@ -11,6 +11,6 @@
     simple_injection/index
     singleton/index
     overrides/index
-    custom_factories/index
     injected/index
     attributes/index
+    custom_factories/index
