@@ -31,11 +31,6 @@ If we were using ``wired`` directly, we would have to define a factory function 
 
 But with ``wired.dataclasses``, no factory function is needed, as `wired.dataclasses` makes a factory for you
 
-.. note::
-
-    We'll show later how a ``wired_factory`` static method can let you write
-    your own factory.
-
 The application is now finished starting up. Later on, it's time to process a "request". Here's a function that can do so:
 
 .. literalinclude:: request.py
