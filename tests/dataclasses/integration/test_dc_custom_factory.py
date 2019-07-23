@@ -9,4 +9,4 @@ def test_greeter():
 
     # Later, a request comes in
     result = process_request(app.registry, 'larry')
-    assert 'Hello Larry my name is Mary' == result
+    assert 'Hello my name is Mary' == result
