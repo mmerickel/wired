@@ -30,7 +30,7 @@ setup(
     packages=find_packages('src', exclude=['tests']),
     package_dir={'': 'src'},
     include_package_data=True,
-    python_requires='>=3.4',
+    python_requires='>=3.5',
     install_requires=requires,
     extras_require={'docs': docs_require, 'testing': tests_require},
     zip_safe=False,
