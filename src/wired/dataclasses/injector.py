@@ -19,12 +19,6 @@ class Injector:
         container = self.container
         context = container.context
 
-        # Don't need to construct this target from a dataclass,
-        # it's a singleton instance already in the container
-        if target in singletons:
-            instance = container.get(target)
-            return instance
-
         # Make the args dict that we will construct dataclass with
         args = {}
 
