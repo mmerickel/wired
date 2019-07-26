@@ -43,5 +43,5 @@ def test_other_data():
     i = injected(BogusResource, attr='title', metadata=dict(a=1), init=False)
     assert BogusResource == i.metadata['injected']['type_']
     assert 'title' == i.metadata['injected']['attr']
-    assert 1 is i.metadata['a']
+    assert 1 == i.metadata['a']
     assert False is i.init

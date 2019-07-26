@@ -28,7 +28,8 @@ class Greeter:
     name: str = 'Mary'
 
     def __call__(self, customer):
-        return f'Hello {customer} my name is {self.name} {self.punctuation.value}'
+        m = f'my name is {self.name} {self.punctuation.value}'
+        return f'Hello {customer} {m}'
 
 
 @pytest.fixture
@@ -40,4 +41,3 @@ def greeter(registry) -> Greeter:
 def test_greeter(greeter: Greeter):
     greeting = greeter('Larry')
     assert 'Hello Larry my name is Mary !!' == greeting
-

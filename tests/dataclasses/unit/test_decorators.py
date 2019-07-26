@@ -55,28 +55,19 @@ def test_singleton_construction_defaults(monkeypatched_dataclasses):
 
 def test_singleton_construction_for_(monkeypatched_dataclasses):
     s = monkeypatched_dataclasses.singleton(for_=99)
-    assert 99 is s.for_
-    assert 99 is s.context
+    assert 99 == s.for_
+    assert 99 == s.context
 
 
 def test_singleton_construction_context(monkeypatched_dataclasses):
     s = monkeypatched_dataclasses.singleton(for_=99, context=88)
-    assert 99 is s.for_
-    assert 88 is s.context
+    assert 99 == s.for_
+    assert 88 == s.context
 
 
 def test_singleton_construction_name(monkeypatched_dataclasses):
     s = monkeypatched_dataclasses.singleton(name='name1')
-    assert 'name1' is s.name
-
-
-# def test_singleton_call(monkeypatched_dataclasses, dummy_wrapped):
-#     scanner = DummyScanner()
-#     s = monkeypatched_dataclasses.singleton()
-#     w = s(dummy_wrapped)
-#     callback = w.callback
-#     callback(scanner, None, DummyScanner)
-#     assert 77 == scanner.registry.instance.flag
+    assert 'name1' == s.name
 
 
 def test_factory_construction_defaults(monkeypatched_dataclasses):
@@ -88,25 +79,16 @@ def test_factory_construction_defaults(monkeypatched_dataclasses):
 
 def test_factory_construction_for_(monkeypatched_dataclasses):
     f = monkeypatched_dataclasses.factory(for_=99)
-    assert 99 is f.for_
-    assert 99 is f.context
+    assert 99 == f.for_
+    assert 99 == f.context
 
 
 def test_factory_construction_context(monkeypatched_dataclasses):
     f = monkeypatched_dataclasses.factory(for_=99, context=88)
-    assert 99 is f.for_
-    assert 88 is f.context
+    assert 99 == f.for_
+    assert 88 == f.context
 
 
 def test_factory_construction_name(monkeypatched_dataclasses):
     f = monkeypatched_dataclasses.factory(name='name1')
-    assert 'name1' is f.name
-
-
-# def test_factory_call(monkeypatched_dataclasses, dummy_wrapped):
-#     scanner = DummyScanner()
-#     f = monkeypatched_dataclasses.factory()
-#     w = f(dummy_wrapped)
-#     callback = w.callback
-#     callback(scanner, None, DummyScanner)
-#     assert 'dataclass_factory' == scanner.registry.factory.__name__
+    assert 'name1' == f.name

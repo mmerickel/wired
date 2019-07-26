@@ -33,7 +33,8 @@ class Greeter:
 
     def __call__(self):
         punctuation = self.settings.punctuation
-        return f'Hello {self.customer_name} my name is {self.name}{punctuation}'
+        m = f'my name is {self.name}{punctuation}'
+        return f'Hello {self.customer_name} {m}'
 
 
 @factory(for_=Greeter, context=FrenchCustomer)
@@ -46,4 +47,5 @@ class FrenchGreeter:
 
     def __call__(self):
         punctuation = self.settings.punctuation
-        return f'Salut {self.customer_name} je m\'apelle {self.name}{punctuation}'
+        m = f'je m\'apelle {self.name}{punctuation}'
+        return f'Salut {self.customer_name} {m}'

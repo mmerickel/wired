@@ -79,7 +79,7 @@ class Injector:
                 args[field_name] = field_value
             except TypeError:
                 # Seems that wired, when looking up str, gives:
-                #   TypeError: can't set attributes of built-in/extension type 'str'
+                #   TypeError: can't set attributes of bui...sion type 'str'
                 # We will use that to our advantage to look for a dataclass
                 # field default value.
                 field_default = getattr(full_field, 'default', None)
@@ -87,9 +87,10 @@ class Injector:
                     args[field_name] = field_default
                     continue
                 elif full_field.init is False:
-                    # Expect there to be a __post_init__ that assigns this value
+                    # Expect a __post_init__ that assigns this value
                     if not hasattr(target, '__post_init__'):
-                        msg = f'Field "{field_name}" has init=False but no __post_init__'
+                        m = 'has init=False but no __post_init__'
+                        msg = f'Field "{field_name}" {m}'
                         raise LookupError(msg)
                     continue
                 else:
@@ -99,11 +100,12 @@ class Injector:
                 # Give up and work around ``wired`` unhelpful exception
                 # by adding some context information.
 
-                # Note that a dataclass with a ``__post_init__`` might still
+                # Note that a dataclass with ``__post_init__`` might still
                 # do some construction. Only do this next part if there's
                 # no __post_init__
                 if not hasattr(target, '__post_init__'):
-                    msg = f'Injector failed for {field_name} on {target.__name__}'
+                    m = 'Injector failed for'
+                    msg = f'{m} {field_name} on {target.__name__}'
                     raise LookupError(msg)
 
         # Now construct an instance of the target dataclass

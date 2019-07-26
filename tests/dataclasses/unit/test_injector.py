@@ -75,7 +75,7 @@ def test_no_registrations(monkeypatch, container):
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
     with pytest.raises(LookupError) as exc:
-        result: Dummy = inj(Dummy)
+        inj(Dummy)
     assert 'Injector failed for target on Dummy' in str(exc.value)
 
 
@@ -92,7 +92,7 @@ def test_wrong_registration(monkeypatch, container):
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
     with pytest.raises(LookupError) as exc:
-        result: Dummy = inj(Dummy)
+        inj(Dummy)
     assert 'Injector failed for target on Dummy' in str(exc.value)
 
 
@@ -109,7 +109,7 @@ def test_fail_primitive_value_no_default(monkeypatch, container):
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
     with pytest.raises(LookupError) as exc:
-        result: Dummy = inj(Dummy)
+        Dummy = inj(Dummy)
     assert 'No default value on field target' in str(exc.value)
 
 
@@ -200,7 +200,7 @@ def test_init_false_missing_postinit(container):
 
     inj = Injector(container=container)
     with pytest.raises(LookupError) as exc:
-        result: Dummy = inj(Dummy)
+        Dummy = inj(Dummy)
     expected = 'Field "name" has init=False but no __post_init__'
     assert expected == str(exc.value)
 
@@ -218,7 +218,7 @@ def test_injected_context(container, dummy_customer):
     assert 'dummy_customer' == getattr(result.context, 'name')
 
 
-def test_injected_customer_from_injected_container_attr(container, dummy_customer):
+def test_injected_customer_from_container_attr(container, dummy_customer):
     # Slightly-better spelling for getting context, but as correct type
 
     @dataclass
@@ -297,6 +297,24 @@ def test_injected_field(monkeypatch, container):
     assert 'source' == result.target.name
 
 
+def test_injected_singleton(monkeypatch, container):
+    # Using the injected field to find a singleton
+
+    @dataclass
+    class Dummy:
+        target: Source = injected(Source)
+
+    def d_get(key):
+        if key is Source:
+            return Source()
+        raise TypeError()
+
+    monkeypatch.setattr(container, 'get', d_get)
+    inj = Injector(container=container)
+    result: Dummy = inj(Dummy)
+    assert 'source' == result.target.name
+
+
 def test_injected_field_with_attr(monkeypatch, container):
     # Using the injected field
 
@@ -330,5 +348,5 @@ def test_injected_field_missing_attr(monkeypatch, container):
     monkeypatch.setattr(container, 'get', d_get)
     inj = Injector(container=container)
     with pytest.raises(AttributeError) as exc:
-        result: Dummy = inj(Dummy)
+        Dummy = inj(Dummy)
     assert 'XXX' in str(exc.value)
