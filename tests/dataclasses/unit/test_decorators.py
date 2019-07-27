@@ -25,6 +25,27 @@ class DummyScanner:
         self.registry = DummyRegistry()
 
 
+def test_dummy_singleton():
+    dr = DummyRegistry()
+    dr.register_singleton(99, 88)
+    assert 99 == dr.instance
+    assert 88 == dr.for_
+
+
+def test_dummy_factory():
+    dr = DummyRegistry()
+    dr.register_factory(99, 88, 77)
+    assert 99 == dr.factory
+    assert 88 == dr.iface_or_type
+    assert 77 == dr.context
+
+
+def test_dummy_scanner():
+    ds = DummyScanner()
+    assert 77 == ds.flag
+    assert isinstance(ds.registry, DummyRegistry)
+
+
 @pytest.fixture
 def dummy_wrapped():
     def wrapped():
@@ -33,17 +54,32 @@ def dummy_wrapped():
     return wrapped
 
 
+def test_dummy_wrapped(dummy_wrapped):
+    w = dummy_wrapped()
+    return None is w
+
+
+def mockattach(wrapped, callback):
+    wrapped.callback = callback
+
+
 @pytest.fixture
 def monkeypatched_dataclasses(monkeypatch, dummy_wrapped):
     # Importing wired.dataclasses imports venusian which then
     # makes it too late to monkeypatch ``venusian.attach``. Centralize
     # the import here where we can do the monkeypatch first.
-    def mockattach(wrapped, callback):
-        wrapped.callback = callback
-
     monkeypatch.setattr('venusian.attach', mockattach)
     from wired import dataclasses
     return dataclasses
+
+
+def test_monkeypatched_dataclasses(monkeypatched_dataclasses):
+    assert 'wired.dataclasses' == monkeypatched_dataclasses.__name__
+
+    class Wrapped:
+        callback: None
+
+    assert None is mockattach(Wrapped(), lambda: None)
 
 
 def test_singleton_construction_defaults(monkeypatched_dataclasses):

@@ -24,6 +24,10 @@ def dummy_customer():
     return DummyCustomer()
 
 
+def test_dummy_customer(dummy_customer):
+    assert 'dummy_customer' == dummy_customer.name
+
+
 @dataclass
 class DummyRegistry(ServiceRegistry):
     factory: Optional[Callable] = None

@@ -46,71 +46,115 @@ def test_service_construction(container):
     assert container == inj.container
 
 
-def test_basic_dataclass(monkeypatch, container):
-    # Put something in the container
+@dataclass
+class DummyBasicDataclass:
+    target: Source
 
-    @dataclass
-    class Dummy:
-        target: Source
-
+    # Use this to bundle the monkeypatch
+    @staticmethod
     def d_get(key):
         return Source()
 
-    monkeypatch.setattr(container, 'get', d_get)
+
+def test_dummy_basic_dataclass():
+    d = DummyBasicDataclass(target=Source())
+    assert isinstance(d.target, Source)
+    d1 = DummyBasicDataclass.d_get(Source)
+    assert isinstance(d1, Source)
+
+
+def test_basic_dataclass(monkeypatch, container):
+    # Put something in the container
+
+    monkeypatch.setattr(container, 'get', DummyBasicDataclass.d_get)
     inj = Injector(container=container)
-    result = inj(Dummy)
+    result = inj(DummyBasicDataclass)
     assert 'source' == result.target.name
+
+
+@dataclass
+class DummyNoRegistrations:
+    target: Source
+
+    # Use this to bundle the monkeypatch
+    @staticmethod
+    def d_get(key):
+        raise LookupError('Injector failed for target on DummyNoRegistrations')
+
+
+def test_dummy_no_registrations():
+    d = DummyNoRegistrations(target=Source())
+    assert isinstance(d.target, Source)
+    with pytest.raises(LookupError):
+        DummyNoRegistrations.d_get(Source)
 
 
 def test_no_registrations(monkeypatch, container):
     # Nothing in registry
 
-    @dataclass
-    class Dummy:
-        target: Source
-
-    def d_get(key):
-        raise LookupError('Injector failed for target on Dummy')
-
-    monkeypatch.setattr(container, 'get', d_get)
+    monkeypatch.setattr(container, 'get', DummyNoRegistrations.d_get)
     inj = Injector(container=container)
     with pytest.raises(LookupError) as exc:
-        inj(Dummy)
-    assert 'Injector failed for target on Dummy' in str(exc.value)
+        inj(DummyNoRegistrations)
+    msg = 'Injector failed for target on DummyNoRegistrations'
+    assert msg == str(exc.value)
+
+
+@dataclass
+class DummyWrongRegistrations:
+    target: WrongSource
+
+    # Use this to bundle the monkeypatch
+    @staticmethod
+    def d_get(key):
+        msg = 'Injector failed for target on DummyWrongRegistrations'
+        raise LookupError(msg)
+
+
+def test_dummy_wrong_registrations():
+    d = DummyWrongRegistrations(target=WrongSource())
+    assert isinstance(d.target, WrongSource)
+    with pytest.raises(LookupError):
+        DummyWrongRegistrations.d_get(Source)
 
 
 def test_wrong_registration(monkeypatch, container):
     # Wrong class in registry
 
-    @dataclass
-    class Dummy:
-        target: WrongSource
-
-    def d_get(key):
-        raise LookupError('Injector failed for target on Dummy')
-
-    monkeypatch.setattr(container, 'get', d_get)
+    monkeypatch.setattr(container, 'get', DummyWrongRegistrations.d_get)
     inj = Injector(container=container)
     with pytest.raises(LookupError) as exc:
-        inj(Dummy)
-    assert 'Injector failed for target on Dummy' in str(exc.value)
+        inj(DummyWrongRegistrations)
+    msg = 'Injector failed for target on DummyWrongRegistrations'
+    assert msg == str(exc.value)
+
+
+@dataclass
+class DummyFailPVND:
+    target: str
+
+    # Use this to bundle the monkeypatch
+    @staticmethod
+    def d_get(key):
+        raise TypeError()
+
+
+def test_dummy_fail_pvnd():
+    d = DummyFailPVND(target='dummypvnd')
+    assert isinstance(d.target, str)
+    with pytest.raises(TypeError):
+        DummyFailPVND.d_get(Source)
 
 
 def test_fail_primitive_value_no_default(monkeypatch, container):
     # Type is str but you don't put primitive values in registry
 
-    @dataclass
-    class Dummy:
-        target: str
-
-    def d_get(key):
-        raise TypeError()
-
-    monkeypatch.setattr(container, 'get', d_get)
+    monkeypatch.setattr(container, 'get', DummyFailPVND.d_get)
     inj = Injector(container=container)
     with pytest.raises(LookupError) as exc:
-        Dummy = inj(Dummy)
-    assert 'No default value on field target' in str(exc.value)
+        inj(DummyFailPVND)
+    msg = 'No default value on field target'
+    assert msg == str(exc.value)
 
 
 def test_primitive_value_with_default(container):
@@ -137,84 +181,110 @@ def test_nothing_needed(container):
     assert Dummy == result.__class__
 
 
+@dataclass
+class DummySingleton:
+    singleton: Singleton
+
+    # Use this to bundle the monkeypatch
+    @staticmethod
+    def d_get(key) -> Singleton:
+        if key is Singleton:
+            return Singleton()
+        raise TypeError()
+
+
+def test_dummy_singleton():
+    ds = DummySingleton(singleton=Singleton())
+    d1 = DummySingleton.d_get(Singleton)
+    assert isinstance(d1, Singleton)
+    with pytest.raises(TypeError):
+        ds.d_get(None)
+
+
 def test_singleton(monkeypatch, container):
     # A singleton is also registered, use it
 
-    @dataclass
-    class Dummy:
-        target: Source
-        singleton: Singleton
-
-    def d_get(key):
-        if key is Singleton:
-            return Singleton()
-        if key is Source:
-            return Source()
-        raise TypeError()
-
-    monkeypatch.setattr(container, 'get', d_get)
+    monkeypatch.setattr(container, 'get', DummySingleton.d_get)
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
-    assert 'source' == result.target.name
+    result: DummySingleton = inj(DummySingleton)
     assert 'singleton' == result.singleton.name
+
+
+@dataclass
+class DummyContainer:
+    container: ServiceContainer
+
+
+def test_dummy_container():
+    sc = ServiceContainer(factories=[])
+    dc = DummyContainer(container=sc)
+    assert isinstance(dc.container, ServiceContainer)
 
 
 def test_container(container):
     # Target wants to grab the container itself
 
-    @dataclass
-    class Dummy:
-        container: ServiceContainer
-
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
+    result: DummyContainer = inj(DummyContainer)
     assert container == result.container
+
+
+@dataclass
+class DummyInit:
+    container: ServiceContainer
+    name: str = field(init=False)
+
+    def __post_init__(self):
+        self.name = 'initialized'
+
+
+def test_dummy_init():
+    di = DummyInit(ServiceContainer(factories=[]))
+    assert isinstance(di.container, ServiceContainer)
+    assert 'initialized' == di.name
 
 
 def test_init_false(container):
     # Use __post_init__ to initialize a field
 
-    @dataclass
-    class Dummy:
-        container: ServiceContainer
-        name: str = field(init=False)
-
-        def __post_init__(self):
-            self.name = 'initialized'
-
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
+    result: DummyInit = inj(DummyInit)
     assert 'initialized' == result.name
+
+
+@dataclass
+class DummyNotInit:
+    container: ServiceContainer
+    name: str = field(init=False)
 
 
 def test_init_false_missing_postinit(container):
     # A field has init=False but the dataclass is missing a __post_init__
 
-    @dataclass
-    class Dummy:
-        container: ServiceContainer
-        name: str = field(init=False)
-
-        def __XXX_INIT__(self):
-            self.name = 'notinitialized'
-
     inj = Injector(container=container)
     with pytest.raises(LookupError) as exc:
-        Dummy = inj(Dummy)
+        inj(DummyNotInit)
     expected = 'Field "name" has init=False but no __post_init__'
     assert expected == str(exc.value)
+
+
+@dataclass
+class DummyInjected:
+    context: Context
+
+
+def test_dummy_injected():
+    context = Context()
+    di = DummyInjected(context=context)
+    assert context == di.context
 
 
 def test_injected_context(container, dummy_customer):
     # Return the context from the container.context via injection
 
-    @dataclass
-    class Dummy:
-        context: Context
-
     container.context = dummy_customer
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
+    result: DummyInjected = inj(DummyInjected)
     assert 'dummy_customer' == getattr(result.context, 'name')
 
 
@@ -267,7 +337,7 @@ def test_container_post_init(monkeypatch, container, dummy_customer):
         def __post_init__(self):
             self.url = self.container.get(Url)
 
-    def d_get(key, context=None):
+    def d_get(key):
         if key is Url:
             return Url()
         raise TypeError()
@@ -279,74 +349,110 @@ def test_container_post_init(monkeypatch, container, dummy_customer):
     assert container == result.container
 
 
+@dataclass
+class DummyInjectedField:
+    target: Source = injected(Source)
+
+    # Use this to bundle the monkeypatch
+    @staticmethod
+    def d_get(key):
+        return Source()
+
+
+def test_dummy_injected_field():
+    d = DummyInjectedField(target=Source())
+    assert isinstance(d.target, Source)
+    d1 = DummyInjectedField.d_get(Source)
+    assert isinstance(d1, Source)
+
+
 def test_injected_field(monkeypatch, container):
     # Using the injected field
 
-    @dataclass
-    class Dummy:
-        target: Source = injected(Source)
-
-    def d_get(key):
-        if key is Source:
-            return Source()
-        raise TypeError()
-
-    monkeypatch.setattr(container, 'get', d_get)
+    monkeypatch.setattr(container, 'get', DummyInjectedField.d_get)
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
+    result: DummyInjectedField = inj(DummyInjectedField)
     assert 'source' == result.target.name
+
+
+@dataclass
+class DummyInjectedSingleton:
+    target: Source = injected(Source)
+
+    # Use this to bundle the monkeypatch
+    @staticmethod
+    def d_get(key):
+        return Source()
+
+
+def test_dummy_injected_singleton():
+    d = DummyInjectedSingleton(target=Source())
+    assert isinstance(d.target, Source)
+    d1 = DummyInjectedSingleton.d_get(Source)
+    assert isinstance(d1, Source)
 
 
 def test_injected_singleton(monkeypatch, container):
     # Using the injected field to find a singleton
 
-    @dataclass
-    class Dummy:
-        target: Source = injected(Source)
-
-    def d_get(key):
-        if key is Source:
-            return Source()
-        raise TypeError()
-
-    monkeypatch.setattr(container, 'get', d_get)
+    monkeypatch.setattr(container, 'get', DummyInjectedSingleton.d_get)
     inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
+    result: DummyInjectedSingleton = inj(DummyInjectedSingleton)
     assert 'source' == result.target.name
+
+
+@dataclass
+class DummyIFWA:
+    target: str = injected(Source, attr='name')
+
+    # Use this to bundle the monkeypatch
+    @staticmethod
+    def d_get(key):
+        return Source()
+
+
+def test_dummy_ifwa():
+    d = DummyIFWA(target='target')
+    assert isinstance(d.target, str)
+    d1 = DummyIFWA.d_get(Source)
+    assert isinstance(d1, Source)
 
 
 def test_injected_field_with_attr(monkeypatch, container):
     # Using the injected field
 
-    @dataclass
-    class Dummy:
-        target: str = injected(Source, attr='name')
+    monkeypatch.setattr(container, 'get', DummyIFWA.d_get)
+    inj = Injector(container=container)
+    result: DummyIFWA = inj(DummyIFWA)
+    assert 'source' == result.target
 
+
+@dataclass
+class DummyIFMA:
+    target: str = injected(Source, attr='XXX')
+
+    # Use this to bundle the monkeypatch
+    @staticmethod
     def d_get(key):
         if key is Source:
             return Source()
         raise TypeError()
 
-    monkeypatch.setattr(container, 'get', d_get)
-    inj = Injector(container=container)
-    result: Dummy = inj(Dummy)
-    assert 'source' == result.target
+
+def test_dummy_ifma():
+    d = DummyIFMA(target='dummy')
+    assert isinstance(d.target, str)
+    d1 = DummyIFMA.d_get(Source)
+    assert isinstance(d1, Source)
+    with pytest.raises(TypeError):
+        DummyIFMA.d_get(Singleton)
 
 
 def test_injected_field_missing_attr(monkeypatch, container):
     # Using the injected field
 
-    @dataclass
-    class Dummy:
-        target: str = injected(Source, attr='XXX')
-
-    def d_get(key):
-        if key is Source:
-            return Source()
-        raise TypeError()
-
-    monkeypatch.setattr(container, 'get', d_get)
+    monkeypatch.setattr(container, 'get', DummyIFMA.d_get)
     inj = Injector(container=container)
     with pytest.raises(AttributeError) as exc:
-        Dummy = inj(Dummy)
+        inj(DummyIFMA)
     assert 'XXX' in str(exc.value)
