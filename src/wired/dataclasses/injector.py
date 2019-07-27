@@ -1,8 +1,7 @@
 from dataclasses import dataclass, fields, Field, MISSING
-from typing import get_type_hints, Optional, Tuple
+from typing import get_type_hints
 
 from wired import ServiceContainer
-
 from wired.dataclasses.models import Context
 
 
@@ -11,10 +10,7 @@ class Injector:
     """ Introspect dataclass and get arguments from container """
     container: ServiceContainer
 
-    def __call__(self,
-                 target,
-                 singletons: Optional[Tuple] = (),
-                 ):
+    def __call__(self, target):
 
         container = self.container
         context = container.context
