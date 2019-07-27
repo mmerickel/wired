@@ -1,4 +1,3 @@
-
 def test_greeter():
     from dc.singleton.app import App
     from dc.singleton.request import process_request

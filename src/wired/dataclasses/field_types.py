@@ -57,30 +57,19 @@ def injected(type_, **kwargs) -> Field:
         kwargs['metadata'] = {}
 
     # Let's go in precedence
+    kwm = kwargs['metadata']
     if 'attr' in kwargs:
-        kwargs['metadata']['injected'] = dict(
-            type_=type_,
-            attr=kwargs['attr']
-        )
+        kwm['injected'] = dict(type_=type_, attr=kwargs['attr'])
         del kwargs['attr']
     elif 'key' in kwargs:
-        kwargs['metadata']['injected'] = dict(
-            type_=type_,
-            key=kwargs['key']
-        )
+        kwm['injected'] = dict(type_=type_, key=kwargs['key'])
         del kwargs['key']
     elif 'call' in kwargs:
         # We'll presume that it is call=True
-        kwargs['metadata']['injected'] = dict(
-            type_=type_,
-            call=kwargs['call']
-        )
+        kwm['injected'] = dict(type_=type_, call=kwargs['call'])
         del kwargs['call']
     else:
         # Default is to treat call=True if nothing else provided
-        kwargs['metadata']['injected'] = dict(
-            type_=type_,
-            call=True
-        )
+        kwm['injected'] = dict(type_=type_, call=True)
 
     return field(**kwargs)

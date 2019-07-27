@@ -16,6 +16,7 @@ class DummyGreeter:
 @dataclass
 class DummyCustomer:
     """ Use this as a context in the container """
+
     name: str = 'dummy_customer'
 
 
@@ -35,8 +36,8 @@ class DummyRegistry(ServiceRegistry):
     context: Optional[Any] = None
 
     def register_factory(
-            self, factory, iface_or_type=Interface, *,
-            context=None, name=''):
+        self, factory, iface_or_type=Interface, *, context=None, name=''
+    ):
         self.factory = factory
         self.iface_or_type = iface_or_type
         self.context = context
@@ -63,8 +64,5 @@ def test_basic(dummy_registry: DummyRegistry, container):
 
 
 def test_for(dummy_registry: DummyRegistry, container):
-    register_dataclass(
-        dummy_registry,
-        DummyGreeter,
-    )
+    register_dataclass(dummy_registry, DummyGreeter)
     assert DummyGreeter == dummy_registry.iface_or_type

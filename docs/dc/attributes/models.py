@@ -8,18 +8,21 @@ from wired.dataclasses import factory, injected, Context
 @dataclass
 class Settings:
     """ Store some configuration settings for the app """
+
     punctuation: str = '.'
 
 
 @dataclass
 class Customer:
     """ A basic customer """
+
     name: str = 'Larry'
 
 
 @dataclass
 class FrenchCustomer:
     """ A certain kind of customer """
+
     name: str = 'Anne'
 
 
@@ -27,6 +30,7 @@ class FrenchCustomer:
 @dataclass
 class Greeter:
     """ A basic greeter """
+
     settings: Settings
     customer_name: str = injected(Context, attr='name')
     name: str = 'Mary'
@@ -41,6 +45,7 @@ class Greeter:
 @dataclass
 class FrenchGreeter:
     """ A greeter to use when the customer (context) is French """
+
     settings: Settings
     customer_name: str = injected(Context, attr='name')
     name: str = 'Henri'

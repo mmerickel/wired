@@ -3,10 +3,7 @@ from .injector import Injector
 
 
 def register_dataclass(
-        registry: ServiceRegistry,
-        target,
-        for_=None,
-        context=None,
+    registry: ServiceRegistry, target, for_=None, context=None
 ):
     """ Generic injector factory for dataclasses """
 

@@ -1,4 +1,3 @@
-
 def test_greeter():
     from dc.injected.app import App
     from dc.injected.request import process_request

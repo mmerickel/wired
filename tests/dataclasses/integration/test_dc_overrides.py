@@ -1,4 +1,3 @@
-
 def test_greeter():
     from dc.overrides.app import App
     from dc.overrides.request import process_request

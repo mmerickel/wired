@@ -9,6 +9,7 @@ from wired.dataclasses import factory, injected
 
 class Context:
     """ Just a marker """
+
     pass
 
 

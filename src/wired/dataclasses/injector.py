@@ -8,6 +8,7 @@ from wired.dataclasses.models import Context
 @dataclass()
 class Injector:
     """ Introspect dataclass and get arguments from container """
+
     container: ServiceContainer
 
     def __call__(self, target):

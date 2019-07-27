@@ -44,5 +44,5 @@ __all__ = [
     Injector,
     Context,
     register_dataclass,
-    singleton
+    singleton,
 ]

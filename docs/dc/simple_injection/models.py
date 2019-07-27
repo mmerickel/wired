@@ -8,6 +8,7 @@ from wired.dataclasses import factory
 @dataclass
 class Settings:
     """ Store some configuration settings for the app """
+
     punctuation: str = '.'
 
 

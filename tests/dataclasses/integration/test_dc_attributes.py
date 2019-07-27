@@ -1,4 +1,3 @@
-
 def test_greeter():
     from dc.attributes.app import App
     from dc.attributes.request import process_request

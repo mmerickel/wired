@@ -70,6 +70,7 @@ def monkeypatched_dataclasses(monkeypatch, dummy_wrapped):
     # the import here where we can do the monkeypatch first.
     monkeypatch.setattr('venusian.attach', mockattach)
     from wired import dataclasses
+
     return dataclasses
 
 
