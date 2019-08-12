@@ -4,11 +4,11 @@
 
 .. automodule:: wired.dataclasses
 
-.. autoclass:: Injector
-    :members:
+.. autofunction:: register_dataclass
 
-.. autoclass:: InjectedArgumentException
-    :members:
+.. autofunction:: factory
+
+.. autofunction:: singleton
 
 .. autoclass:: Context
     :members:

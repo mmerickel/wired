@@ -4,7 +4,8 @@ from typing import Optional
 import pytest
 
 from wired import ServiceRegistry, ServiceContainer
-from wired.dataclasses import injected, Injector, Context
+from wired.dataclasses import injected, Context
+from wired.dataclasses.injector import Injector
 
 
 class Source:

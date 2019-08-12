@@ -19,12 +19,6 @@ cases.
 from dataclasses import field, Field
 
 
-class InjectedArgumentException(Exception):
-    def __init__(self):
-        msg = 'Cannot supply both attr and key arguments to inject'
-        super().__init__(msg)
-
-
 def injected(type_, **kwargs) -> Field:
     """ Get a value from an injected type
 
@@ -50,7 +44,7 @@ def injected(type_, **kwargs) -> Field:
 
     # First a sanity check, can't have both attr and key
     if 'attr' in kwargs and 'key' in kwargs:
-        raise InjectedArgumentException()
+        raise ValueError('Cannot supply both attr and key arguments')
 
     # If metadata was also passed in, preserve it, otherwise start clean
     if 'metadata' not in kwargs:

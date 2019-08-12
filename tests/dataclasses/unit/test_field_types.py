@@ -1,6 +1,6 @@
 import pytest
 
-from wired.dataclasses import injected, InjectedArgumentException
+from wired.dataclasses import injected
 
 
 class BogusResource:
@@ -8,9 +8,9 @@ class BogusResource:
 
 
 def test_invalid_both_attr_and_key():
-    with pytest.raises(InjectedArgumentException) as exc:
+    with pytest.raises(ValueError) as exc:
         injected(BogusResource, attr='title', key='name')
-    msg = 'Cannot supply both attr and key arguments to inject'
+    msg = 'Cannot supply both attr and key arguments'
     assert msg == str(exc.value)
 
 
