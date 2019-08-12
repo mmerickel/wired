@@ -1,8 +1,13 @@
 unreleased
 ==========
 
+- Added ``wired.dataclasses`` optional package with support for automatically
+  generating service factories for Python 3.7's typeed-dataclasses.
+  Thanks Paul!
+  See https://github.com/mmerickel/wired/pull/19
+
 - Added a new tutorial on writing a DI framework around Python 3.7's
-  typed-dataclasses. Thanks Paul!
+  typed-dataclasses. Thanks again Paul!
   See https://github.com/mmerickel/wired/pull/16
 
 0.2 (2019-04-22)
