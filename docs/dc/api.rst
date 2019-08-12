@@ -7,9 +7,6 @@
 .. autoclass:: Injector
     :members:
 
-.. autoclass:: injected
-    :members:
-
 .. autoclass:: InjectedArgumentException
     :members:
 
