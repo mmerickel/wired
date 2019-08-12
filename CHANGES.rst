@@ -1,8 +1,8 @@
-unreleased
-==========
+0.2.1 (2019-08-12)
+==================
 
 - Added ``wired.dataclasses`` optional package with support for automatically
-  generating service factories for Python 3.7's typeed-dataclasses.
+  generating service factories for Python 3.7's typed-dataclasses.
   Thanks Paul!
   See https://github.com/mmerickel/wired/pull/19
 
