@@ -10,6 +10,8 @@
 
 .. autofunction:: singleton
 
+.. autofunction:: injected
+
 .. autoclass:: Context
     :members:
 

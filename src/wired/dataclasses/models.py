@@ -1,4 +1,5 @@
 class Context:
-    """ Marker sentinel for telling injector to give container.context """
+    """
+    Marker sentinel for telling injector to provide ``container.context``.
 
-    pass
+    """

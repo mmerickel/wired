@@ -6,6 +6,20 @@ from .registration import register_dataclass
 
 # noinspection PyPep8Naming
 class singleton:
+    """
+    Register an instance of a dataclass as a lower-case singleton.
+
+    The singleton will be registered with a :class:`wired.ServiceRegistry` when
+    performing a venusian scan.
+
+    .. code-block:: python
+
+        @singleton
+        @dataclass
+        class Settings:
+            punctuation: str = ''
+
+    """
     def __init__(self, for_=None, context=None, name: str = None):
         self.for_ = for_
         self.context = context if context else for_
@@ -29,6 +43,35 @@ class singleton:
 
 # noinspection PyPep8Naming
 class factory:
+    """
+    Register a factory for a dataclass that can sniff dependencies.
+
+    The factory will be registered with a :class:`wired.ServiceRegistry` when
+    performing a venusian scan.
+
+    .. code-block:: python
+
+        from sqlalchemy.orm import Session
+
+        @factory
+        @dataclass
+        class LoginService:
+            db: Session
+
+        # ... later
+
+        registry = ServiceRegistry()
+        scanner = venusian.Scanner(registry=registry)
+        scanner.scan()
+
+        # ... later
+
+        container = registry.create_container()
+        svc = container.get(LoginService)
+
+    .. seealso:: :func:`wired.dataclasses.register_dataclass`
+
+    """
     def __init__(self, for_=None, context=None, name: str = None):
         self.for_ = for_
         self.context = context if context else for_
