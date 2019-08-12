@@ -109,6 +109,7 @@ More Information
 
    usage
    tutorials/index
+   dc/index
    api
    changes
 
