@@ -20,6 +20,7 @@ class singleton:
             punctuation: str = ''
 
     """
+
     def __init__(self, for_=None, context=None, name: str = None):
         self.for_ = for_
         self.context = context if context else for_
@@ -72,6 +73,7 @@ class factory:
     .. seealso:: :func:`wired.dataclasses.register_dataclass`
 
     """
+
     def __init__(self, for_=None, context=None, name: str = None):
         self.for_ = for_
         self.context = context if context else for_
