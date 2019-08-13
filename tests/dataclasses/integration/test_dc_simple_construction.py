@@ -1,6 +1,3 @@
-# app.py
-
-
 def test_greeter():
     from dc.simple_construction.app import App
     from dc.simple_construction import configure

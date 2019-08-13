@@ -9,11 +9,16 @@ from wired.dataclasses.models import Context
 class Injector:
     """ Introspect dataclass and get arguments from container """
 
-    container: ServiceContainer
+    # XXX I can't find anything more specific for a dataclass. Ideally
+    # we'd have something like Type[dataclass]. In the stdlib, is_dataclass
+    # is implemented as hasattr(obj, dataclasses._FIELDS)
+    target: type
 
-    def __call__(self, target):
+    # XXX potentially define a __post_init__ here to process the target
+    # to reduce the work done in __call__
 
-        container = self.container
+    def __call__(self, container):
+        target = self.target
         context = container.context
 
         # Make the args dict that we will construct dataclass with
@@ -45,6 +50,7 @@ class Injector:
                 injected_info = full_field.metadata['injected']
                 injected_attr = injected_info.get('attr')
                 injected_type = injected_info['type_']
+                injected_name = injected_info['name']
 
                 # Another special case: if asked to inject Context or
                 # ServiceContainer, consider it like a sentinel and return it.
@@ -54,7 +60,9 @@ class Injector:
                     injected_target = container
                 else:
                     # Ask the registry for one of these
-                    injected_target = container.get(injected_type)
+                    injected_target = container.get(
+                        injected_type, name=injected_name
+                    )
 
                 # If attr is used, get specified attribute off that instance
                 if injected_attr:

@@ -1,9 +1,9 @@
-from wired import ServiceRegistry, ServiceContainer
+from wired import ServiceRegistry
 from .injector import Injector
 
 
 def register_dataclass(
-    registry: ServiceRegistry, target, for_=None, context=None
+    registry: ServiceRegistry, target, for_=None, context=None, name=''
 ):
     """
     Register a factory for a dataclass that can sniff dependencies.
@@ -23,6 +23,19 @@ def register_dataclass(
         container = registry.create_container()
         svc = container.get(LoginService)
 
+    :param for_:
+        By default, ``target`` is used as the service type. This can be used
+        to override the ``iface_or_type`` argument in
+        :meth:`wired.ServiceRegistry.register_factory` to some other type.
+
+    :param context:
+        The ``context`` argument in
+        :meth:`wired.ServiceRegistry.register_factory`.
+
+    :param str name:
+        The ``name`` argument in
+        :meth:`wired.ServiceRegistry.register_factory`.
+
     .. seealso::
 
         - :func:`wired.dataclasses.factory`
@@ -35,10 +48,5 @@ def register_dataclass(
     if for_ is None:
         for_ = target
 
-    # Use a generic dataclass factory
-    def dataclass_factory(container: ServiceContainer):
-        injector = Injector(container=container)
-        instance = injector(target)
-        return instance
-
-    registry.register_factory(dataclass_factory, for_, context=context)
+    injector = Injector(target)
+    registry.register_factory(injector, for_, context=context, name=name)

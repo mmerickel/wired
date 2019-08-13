@@ -17,53 +17,39 @@ cases.
 
 """
 from dataclasses import field, Field
+from zope.interface import Interface
 
 
-def injected(type_, **kwargs) -> Field:
-    """ Get a value from an injected type
+def injected(
+    iface_or_type=Interface, *, name='', attr=None, **kwargs
+) -> Field:
+    """
+    Customize how the field is populated from the generated factory.
 
-    We frequently want part of an injectable or adapter. Just an attribute
-    or, for injectable/adapters that are dict-like, a key.
+    If just the field type is insufficient, this descriptor can be used to
+    more explicitly define how the field in the dataclass should be populated
+    from the :class:`wired.ServiceContainer`.
 
-    This field type accepts an injectable/adapter and serves three purposes:
+    :param iface_or_type:
+        The ``iface_or_type`` argument in :meth:`wired.ServiceContainer.get`.
 
-    - Get an attribute off of it by passing in attr='somevalue'
+    :param str name:
+        The ``name`` argument in :meth:`wired.ServiceContainer.get`.
 
-    - Or, get a key out of it by passing in key=''
+    :param str attr:
+        An attribute on the returned service object.
 
-    - Or, if the injectable/adapter has a __call__, return the value
-      of calling it
+    All other kwargs are forwarded directly into :func:`dataclasses.field`.
 
-    - Otherwise, return the injectable/adapter, same as if you didn't
-      provide a field
-
-     We could just manually do ``injected`` then pick apart the injected
-     value. But that exposes a big surface area. This field type lets us
-     zero in on what we want.
-     """
-
-    # First a sanity check, can't have both attr and key
-    if 'attr' in kwargs and 'key' in kwargs:
-        raise ValueError('Cannot supply both attr and key arguments')
-
+    """
     # If metadata was also passed in, preserve it, otherwise start clean
     if 'metadata' not in kwargs:
         kwargs['metadata'] = {}
 
     # Let's go in precedence
     kwm = kwargs['metadata']
-    if 'attr' in kwargs:
-        kwm['injected'] = dict(type_=type_, attr=kwargs['attr'])
-        del kwargs['attr']
-    elif 'key' in kwargs:
-        kwm['injected'] = dict(type_=type_, key=kwargs['key'])
-        del kwargs['key']
-    elif 'call' in kwargs:
-        # We'll presume that it is call=True
-        kwm['injected'] = dict(type_=type_, call=kwargs['call'])
-        del kwargs['call']
-    else:
-        # Default is to treat call=True if nothing else provided
-        kwm['injected'] = dict(type_=type_, call=True)
+    injected = kwm['injected'] = dict(type_=iface_or_type, name=name)
+    if attr is not None:
+        injected['attr'] = attr
 
     return field(**kwargs)

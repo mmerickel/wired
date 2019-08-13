@@ -7,7 +7,7 @@ from .registration import register_dataclass
 # noinspection PyPep8Naming
 class singleton:
     """
-    Register an instance of a dataclass as a lower-case singleton.
+    Register an instance of a dataclass as a singleton.
 
     The singleton will be registered with a :class:`wired.ServiceRegistry` when
     performing a venusian scan.
@@ -19,9 +19,11 @@ class singleton:
         class Settings:
             punctuation: str = ''
 
+    .. seealso:: :meth:`wired.ServiceRegistry.register_singleton`
+
     """
 
-    def __init__(self, for_=None, context=None, name: str = None):
+    def __init__(self, for_=None, context=None, name: str = ''):
         self.for_ = for_
         self.context = context if context else for_
         self.name = name
@@ -36,7 +38,9 @@ class singleton:
             # If there is a for_ use it, otherwise, register for the same
             # class as the instance
             for_ = self.for_ if self.for_ else cls
-            registry.register_singleton(instance, for_)
+            registry.register_singleton(
+                instance, for_, context=self.context, name=self.name
+            )
 
         attach(wrapped, callback, category='wired')
         return wrapped
@@ -70,11 +74,15 @@ class factory:
         container = registry.create_container()
         svc = container.get(LoginService)
 
-    .. seealso:: :func:`wired.dataclasses.register_dataclass`
+    .. seealso::
+
+        - :func:`wired.dataclasses.register_dataclass`
+
+        - :func:`wired.ServiceRegistry.register_factory`
 
     """
 
-    def __init__(self, for_=None, context=None, name: str = None):
+    def __init__(self, for_=None, context=None, name: str = ''):
         self.for_ = for_
         self.context = context if context else for_
         self.name = name
@@ -85,7 +93,9 @@ class factory:
             # If there is a for_ use it, otherwise, register for the same
             # class as the instance
             for_ = self.for_ if self.for_ else cls
-            register_dataclass(registry, cls, for_=for_, context=self.context)
+            register_dataclass(
+                registry, cls, for_=for_, context=self.context, name=self.name
+            )
 
         attach(wrapped, callback, category='wired')
         return wrapped
