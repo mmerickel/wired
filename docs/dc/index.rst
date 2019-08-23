@@ -1,6 +1,6 @@
-============
-Dataclass DI
-============
+==============
+Dataclasses DI
+==============
 
 ``wired`` can be used for Inversion of Control (IoC) to build a custom app with dependency injection (DI.)
 But maybe you want to adopt an existing DI system? ``wired.dataclasses`` provides a DI system based on Python's ``datclasses`` and fields.
@@ -86,4 +86,3 @@ Contents
     :maxdepth: 1
 
     usage
-    API <api>

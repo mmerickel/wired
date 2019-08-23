@@ -110,6 +110,7 @@ More Information
    usage
    tutorial/index
    dc/index
+   dc/usage
    api
    changes
 
