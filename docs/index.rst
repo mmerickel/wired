@@ -99,7 +99,7 @@ The app processes a customer by making a container and doing the operation:
 >>> print(greeting)
 Hello !!
 
-For a deeper introduction, try :doc:`the Tour of Wired tutorial <./tutorials/tour/index>`.
+For a deeper introduction, try :doc:`the Tour of Wired tutorial <./tutorial/index>`.
 
 More Information
 ================
@@ -108,7 +108,7 @@ More Information
    :maxdepth: 1
 
    usage
-   tutorials/index
+   tutorial/index
    dc/index
    api
    changes

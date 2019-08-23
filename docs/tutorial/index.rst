@@ -1,14 +1,13 @@
-=============
-Tour of Wired
-=============
+========
+Tutorial
+========
 
 Let's write a ``wired`` application using inversion of control (IoC).
 
 .. note::
 
     This tutorial uses dataclasses. Why? Why not? [wink]
-    There's nothing in the core of ``wired`` that requires type hints, dataclasses, etc.
-    (Though there might later be an add-on or optional piece.)
+    There's nothing in the core of ``wired`` that *requires* type hints, dataclasses, etc., although ``wired`` does ship with a dependency injection system based on dataclasses.
 
 Our application will be a ``Greeter``.
 Someone walks in a store, they get greeted.
@@ -28,8 +27,9 @@ We'd like IoC to help us make this into a *decoupled*, *extensible*, *configurab
 
 - Finally, let's make it look like the patterns we see in web frameworks
 
-Tutorial Steps
-==============
+.. raw:: html
+
+    <h2>Tutorial Steps</h2>
 
 .. toctree::
    :maxdepth: 1
