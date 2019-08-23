@@ -1,5 +1,5 @@
 from dataclasses import dataclass, fields, Field, MISSING
-from typing import get_type_hints
+from typing import get_type_hints, Dict, Any
 
 from wired import ServiceContainer
 from wired.dataclasses.models import Context
@@ -17,7 +17,7 @@ class Injector:
     # XXX potentially define a __post_init__ here to process the target
     # to reduce the work done in __call__
 
-    def __call__(self, container):
+    def __call__(self, container, props: Dict[str, Any] = None):
         target = self.target
         context = container.context
 
@@ -31,6 +31,12 @@ class Injector:
 
         # Iterate through the dataclass fields
         for field_name, field_type in get_type_hints(target).items():
+
+            # Highest precedence: this field occurs in the passed-in
+            # props. Check there first.
+            if props and field_name in props:
+                args[field_name] = props[field_name]
+                continue
 
             # Doing this style of bailing out quickly for performance
             # reasons. Don't want to keep doing "if", though it

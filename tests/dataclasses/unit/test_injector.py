@@ -178,6 +178,20 @@ def test_nothing_needed(container):
     assert Dummy == result.__class__
 
 
+def test_only_props(container):
+    # Our dataclass gets everything passed in as "props", nothing
+    # will come from the registry.
+
+    @dataclass
+    class Dummy:
+        name: str
+
+    inj = Injector(Dummy)
+    props = dict(name='Name Prop')
+    result: Dummy = inj(container, props=props)
+    assert Dummy == result.__class__
+
+
 @dataclass
 class DummySingleton:
     singleton: Singleton
@@ -422,6 +436,16 @@ def test_injected_field_with_attr(monkeypatch, container):
     inj = Injector(DummyIFWA)
     result: DummyIFWA = inj(container)
     assert 'source' == result.target
+
+
+def test_prop_before_injected_field_with_attr(monkeypatch, container):
+    # Using the injected field
+
+    monkeypatch.setattr(container, 'get', DummyIFWA.d_get)
+    inj = Injector(DummyIFWA)
+    props = dict(target='passed in prop')
+    result: DummyIFWA = inj(container, props=props)
+    assert 'passed in prop' == result.target
 
 
 @dataclass
