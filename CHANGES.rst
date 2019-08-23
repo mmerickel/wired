@@ -1,3 +1,9 @@
+Unreleased
+==========
+
+- Removed the "how to write an injector" tutorial, then flatten a lot of the
+  docs into no more than two levels (to please the RTD theme.)
+
 0.2.1 (2019-08-12)
 ==================
 
