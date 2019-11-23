@@ -51,22 +51,55 @@ Once you have a copy of the source, you can install it with:
 
 .. _Github repo: https://github.com/mmerickel/wired
 
-Quick Usage
-===========
+Example
+=======
 
-Imagine an application where customers walk in the door and you want to greet them with a Greeter. This application is simple: there's only one Greeter.
+Imagine an application where customers walk in the door and you want a `Greeter` to greet them:
 
-To do this, we:
+.. code-block:: python
 
-- Setup the application: make a "registry" and register some things (a "singleton" to hold the ``Greeter``)
+    class Greeter:
+        def __init__(self, greeting):
+            self.greeting = greeting
 
-- Start processing requests (greet someone) by getting stuff we need to process the request
+        def __call__(self):
+            return self.greeting + ' !!'
 
-- "Get stuff we need" by asking *the system* for what we need (a ``Greeter``)
+Our application is pluggable: it has a "registry" which processes operations in a "container":
 
-For a deeper dive, try :doc:`the tutorial <./tutorial/index>`.
+>>> from wired import ServiceRegistry
+>>> registry = ServiceRegistry()
 
-.. literalinclude:: examples/simple_example.py
+As part of application setup, stuff gets put in the app's registry.  This application is simple: there's only one Greeter, so we register a "singleton" `Greeter` instance:
+
+.. code-block:: python
+
+    # Greeters are nice...they greet people!
+    greeter = Greeter(greeting='Hello')
+
+    # Register it as a singleton using its class for the "key"
+    registry.register_singleton(greeter, Greeter)
+
+Here is a function that greets a customer as part of a "container" operation:
+
+.. code-block:: python
+
+    def greet_a_customer(container):
+
+        # Ask the *system* via the container to find the `Greeter` for us
+        the_greeter = container.get(Greeter)
+        greeting = the_greeter()
+
+        return greeting
+
+The app processes a customer by making a container and doing the operation:
+
+>>> container = registry.create_container()
+>>> greeting = greet_a_customer(container)
+>>> print(greeting)
+Hello !!
+
+For a deeper introduction, try :doc:`the Tour of Wired tutorial <./tutorials/tour/index>`.
 
 More Information
 ================
@@ -75,7 +108,7 @@ More Information
    :maxdepth: 1
 
    usage
-   tutorial/index
+   tutorials/index
    api
    changes
 
