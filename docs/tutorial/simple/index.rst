@@ -8,7 +8,7 @@ The store has one ``Greeter`` who always gives one kind of greeting.
 The Greeter is a "singleton": there is only one, and we create it at startup time and re-use for the lifetime of the application.
 
 Whenever a customer comes in, we make a "container" to do the work of the interaction.
-We use the container to get from the registry all the piecesneeded.
+We use the container to get from the registry all the pieces needed.
 (In this case, the only thing we need is the ``Greeter``.)
 
 In this application, ``main`` shows:
