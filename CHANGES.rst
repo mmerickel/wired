@@ -1,5 +1,5 @@
-Unreleased
-==========
+0.2.2 (2020-05-26)
+==================
 
 - Added a ``name`` argument to ``wired.dataclasses.register_dataclass``
   to support registering services by name.
