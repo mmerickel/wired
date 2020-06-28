@@ -19,7 +19,7 @@ class Injector:
 
     def __call__(self, container):
         target = self.target
-        context = container.context
+        context = getattr(container, 'context', None)
 
         # Make the args dict that we will construct dataclass with
         args = {}

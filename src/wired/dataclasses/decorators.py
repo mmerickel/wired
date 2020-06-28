@@ -84,7 +84,7 @@ class factory:
 
     def __init__(self, for_=None, context=None, name: str = ''):
         self.for_ = for_
-        self.context = context if context else for_
+        self.context = context
         self.name = name
 
     def __call__(self, wrapped):
