@@ -5,8 +5,14 @@ wired
 .. image:: https://img.shields.io/pypi/v/wired.svg
     :target: https://pypi.org/pypi/wired
 
-.. image:: https://img.shields.io/travis/mmerickel/wired/master.svg
-    :target: https://travis-ci.org/mmerickel/wired
+.. image:: https://github.com/mmerickel/wired/workflows/Build/test%20on%20Linux/badge.svg
+    :target: https://github.com/mmerickel/wired/actions?query=workflow%3A%22Build%2Ftest+on+Linux%22
+
+.. image:: https://github.com/mmerickel/wired/workflows/Build/test%20on%20MacOS/badge.svg
+    :target: https://github.com/mmerickel/wired/actions?query=workflow%3A%22Build%2Ftest+on+MacOS%22
+
+.. image:: https://github.com/mmerickel/wired/workflows/Build/test%20on%20Windows/badge.svg
+    :target: https://github.com/mmerickel/wired/actions?query=workflow%3A%22Build%2Ftest+on+Windows%22
 
 .. image:: https://readthedocs.org/projects/wired/badge/?version=latest
     :target: https://readthedocs.org/projects/wired/?badge=latest

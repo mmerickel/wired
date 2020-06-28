@@ -1,5 +1,9 @@
-Unreleased
-==========
+0.2.2 (2020-05-26)
+==================
+
+- Added a ``name`` argument to ``wired.dataclasses.register_dataclass``
+  to support registering services by name.
+  See https://github.com/mmerickel/wired/pull/32
 
 - Removed the "how to write an injector" tutorial, then flatten a lot of the
   docs into no more than two levels (to please the RTD theme.)
