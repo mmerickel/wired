@@ -161,7 +161,7 @@ If so, just ask for it as well:
 
 .. code-block:: python
 
-    @factory
+    @wired_factory()
     def login_factory(container: ServiceContainer, dbsession: Session) -> LoginService:
         # Potentially do some work here
         return LoginService(dbsession=dbsession)
@@ -170,7 +170,7 @@ Argument order doesn't matter:
 
 .. code-block:: python
 
-    @factory
+    @wired_factory()
     def login_factory(dbsession: Session, container: ServiceContainer) -> LoginService:
         # Potentially do some work here
         return LoginService(dbsession=dbsession)
@@ -190,20 +190,26 @@ The DI story makes this easy, using the ``Context`` marker which flags the injec
     class Greeting:
         customer: Context
 
-That's great, but sometimes we know the context class.
+        def __call__(self) -> str:
+            return f'Hello {self.customer.name}'
+
+That's great, but sometimes we know the context is a ``Customer`` and we want to use that in the type hint.
 It would be nice if we could tell *Python* one type hint, but use another type for injection.
 
-Let's use PEP 593 "Flexible Annotations":
+Let's use PEP 593 "Flexible Annotations".
+``wired`` would add:
 
 .. code-block:: python
 
-    # In some library code
     Injector = object()
     LT = TypeVar("local_type")
     RT = TypeVar("registered_type")
     Injected = Annotated[LT, RT, Injector]
 
-    # In user code
+Now a user could write:
+
+.. code-block:: python
+
     @dataclass
     class Customer:  # container.context is an instance of this
         name: str
@@ -230,7 +236,7 @@ Thanks to PEP 593, we can do the same for functions:
 
 .. code-block:: python
 
-    @factory
+    @wired_factory()
     def greeting_factory(customer: Injected[Customer, Context]) -> LoginService:
         # Potentially do some work here
         return Greeting(customer=customer)
@@ -267,7 +273,7 @@ In fact, one could imagine a chain of "Injector DSL" adapter-thingies, as long a
     class Greeting:
         customer_name: Injected[str, Context, Chain(Attr('english_names'), Key('first_name')]
 
-Or intriguingly, set up an observable-style system that records dependencies and updates "subscribers":
+These ``Chain`` predicates could act like a database query, filtering the result set from a source:
 
 .. code-block:: python
 
@@ -275,6 +281,9 @@ Or intriguingly, set up an observable-style system that records dependencies and
     @dataclass
     class Greeting:
         customers: Injected[Tuple[Customer], AllCustomers, Chain(Filter(status='active'), Batch(10))]
+
+In fact, this pattern matches ``Rx`` and other observable-style libraries.
+What's nice is that, like Pyramid predicates, these don't have to be in the core.
 
 Custom DI
 =========
@@ -310,6 +319,9 @@ Instead, move the custom-construction bits to an intermediate decorator:
             self.dbsession = dbsession
 
 This decorator would do nothing more than stamp -- dynamically -- a ``__wired_factory__`` class method onto the decorated class.
+
+Further ideas: a custom injector which recorded the connection to a service, then pushed updates to instances when the service changed.
+Sort of like pub-sub.
 
 Props
 =====
