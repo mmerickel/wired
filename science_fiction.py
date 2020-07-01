@@ -10,7 +10,7 @@ class Greeting(Component, Protocol):
     label2: str
 
 
-# @dataclass
+@dataclass
 class FrenchGreeting(Greeting):
     name: str = 'Marie'
     label: str = 'Bonjour'

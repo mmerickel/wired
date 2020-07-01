@@ -34,6 +34,7 @@ setup(
     url='https://wired.readthedocs.io',
     packages=find_packages('src', exclude=['tests']),
     package_dir={'': 'src'},
+    package_data={'wired': ['py.typed']},
     include_package_data=True,
     python_requires='>=3.5',
     install_requires=requires,
