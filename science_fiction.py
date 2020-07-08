@@ -7,12 +7,12 @@ class Component(Protocol):
 
 
 class Greeting(Component, Protocol):
-    label2: str
+    name: str
+    label: str
 
 
 @dataclass
 class FrenchGreeting(Greeting):
-    name: str = 'Marie'
     label: str = 'Bonjour'
 
 
