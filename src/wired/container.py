@@ -154,12 +154,12 @@ class ServiceContainer:
         )
 
     def get(
-            self,
-            iface_or_type=Interface,
-            *,
-            context=_marker,
-            name='',
-            default=_marker
+        self,
+        iface_or_type=Interface,
+        *,
+        context=_marker,
+        name='',
+        default=_marker,
     ):
         """
         Find a cached instance or create one from the registered factory.
@@ -241,7 +241,7 @@ class ServiceContainer:
         return inst
 
     def set(
-            self, service, iface_or_type=Interface, *, context=_marker, name=''
+        self, service, iface_or_type=Interface, *, context=_marker, name=''
     ):
         """
         Add a service instance to the container.
@@ -282,7 +282,7 @@ class ServiceContainer:
         cache.register((IServiceInstance, context_iface), iface, name, service)
 
     def register_factory(
-            self, factory, iface_or_type=Interface, *, context=None, name=''
+        self, factory, iface_or_type=Interface, *, context=None, name=''
     ):
         """
         Register a service factory.
@@ -301,7 +301,7 @@ class ServiceContainer:
         _register_factory(info, factories, iface, context_iface, name)
 
     def register_singleton(
-            self, service, iface_or_type=Interface, *, context=None, name=''
+        self, service, iface_or_type=Interface, *, context=None, name=''
     ):
         """
         Register a singleton instance.
@@ -363,9 +363,7 @@ class ServiceRegistry:
         return self._ServiceContainer(self._factories, context=context)
 
     def register_factory(
-            self, factory=None, iface_or_type=Interface,
-            *,
-            context=None, name=''
+        self, factory=None, iface_or_type=Interface, *, context=None, name=''
     ):
         """
         Register a service factory.
@@ -422,13 +420,14 @@ class ServiceRegistry:
         info = ServiceFactoryInfo(factory, iface, context_iface, wants_context)
         _register_factory(info, self._factories, iface, context_iface, name)
 
-    def register_service(self,
-                         klass_or_func: Union[Type[T], Callable],
-                         *,
-                         for_: Optional[Type[T]] = None,
-                         context=None,
-                         name='',
-                         ) -> None:
+    def register_service(
+        self,
+        klass_or_func: Union[Type[T], Callable],
+        *,
+        for_: Optional[Type[T]] = None,
+        context=None,
+        name='',
+    ) -> None:
         """ No standalone factory function """
 
         # TODO Made a different method because register_factory
@@ -457,11 +456,12 @@ class ServiceRegistry:
         self.register_factory(
             factory,
             for_ if for_ else klass_or_func,
-            context=context, name=name,
+            context=context,
+            name=name,
         )
 
     def register_singleton(
-            self, service, iface_or_type=Interface, *, context=None, name=''
+        self, service, iface_or_type=Interface, *, context=None, name=''
     ):
         """
         Register a singleton instance.
@@ -505,10 +505,10 @@ except ImportError:
 
 
 def wired_factory(
-        *,
-        for_: Optional[Type[T]] = None,
-        context: Optional[Type[C]] = None,
-        name: str = '',
+    *,
+    for_: Optional[Type[T]] = None,
+    context: Optional[Type[C]] = None,
+    name: str = '',
 ):
     """ Decorator for registering factories """
 
@@ -520,7 +520,10 @@ def wired_factory(
         def callback(scanner: Scanner, _name: str, cls: Type[T]):
             registry: ServiceRegistry = getattr(scanner, 'registry')
             registry.register_service(
-                wrapped, for_=for_, context=context, name=name,
+                wrapped,
+                for_=for_,
+                context=context,
+                name=name,
             )
 
         attach(wrapped, callback, category='wired')
@@ -535,8 +538,10 @@ def _register_factory(info, factories, iface, context_iface, name):
 
 def _find_factory(factories, iface, context_iface, name):
     return factories.lookup(
-        (IServiceFactory, context_iface), iface,
-        name=name, default=None,
+        (IServiceFactory, context_iface),
+        iface,
+        name=name,
+        default=None,
     )
 
 

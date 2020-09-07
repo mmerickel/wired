@@ -11,5 +11,5 @@ include LICENSE.txt
 include pyproject.toml setup.cfg
 include .coveragerc .flake8
 include tox.ini readthedocs.yml
-
+include mypy.ini pytest.ini
 recursive-exclude * __pycache__ *.py[cod]

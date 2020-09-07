@@ -17,6 +17,7 @@ except ImportError:
 def test_current():
     """ Current, pre-refactor behavior """
     from .factories.current import registry, LoginService
+
     container: ServiceContainer = registry.create_container()
     result: LoginService = container.get(LoginService)
     assert isinstance(result, LoginService)
@@ -25,6 +26,7 @@ def test_current():
 def test_autogenerate():
     """ Simplest case, just generate a closure as factory function """
     from .factories.autofunction import registry, LoginService
+
     container: ServiceContainer = registry.create_container()
     result: LoginService = container.get(LoginService)
     assert isinstance(result, LoginService)
@@ -33,6 +35,7 @@ def test_autogenerate():
 def test_autogenerate_no_interface():
     """ Same but fails if using an interface instead of a class """
     from .factories.autofunction_interface import registry, ILogin
+
     container: ServiceContainer = registry.create_container()
     with pytest.raises(ValueError) as exc:
         container.get(ILogin)
@@ -43,6 +46,7 @@ def test_first_decorator():
     """ Same as autogenerate but with decorator """
     from .factories import first_decorator
     from .factories.first_decorator import LoginService
+
     registry = ServiceRegistry()
     scanner = Scanner(registry=registry)
     scanner.scan(first_decorator)
@@ -55,6 +59,7 @@ def test_decorator_args():
     """ Call the decorator with context etc. """
     from .factories import decorator_args
     from .factories.decorator_args import LoginService, CustomLoginService
+
     registry = ServiceRegistry()
 
     # First register the "built-in" service, then scan to get
@@ -73,9 +78,12 @@ def test_decorator_context():
     """ Two decorators each with a registered context """
     from .factories import decorator_context
     from .factories.decorator_context import (
-        LoginService, CustomLoginService,
-        Customer, CustomCustomer,
+        LoginService,
+        CustomLoginService,
+        Customer,
+        CustomCustomer,
     )
+
     registry = ServiceRegistry()
 
     # First register the "built-in" service, then scan to get
@@ -100,6 +108,7 @@ def test_custom_constructor_imperative():
     """ Service has a ``__wired_factory__ classmethod """
     from .factories import custom_factory
     from .factories.custom_factory import registry, LoginService
+
     scanner = Scanner(registry=registry)
     scanner.scan(custom_factory)
 
@@ -113,6 +122,7 @@ def test_custom_constructor_decorator():
     """ Service has a ``__wired_factory__ classmethod and decorator """
     from .factories import custom_factory_decorator
     from .factories.custom_factory_decorator import LoginService
+
     registry = ServiceRegistry()
     scanner = Scanner(registry=registry)
     scanner.scan(custom_factory_decorator)
@@ -127,6 +137,7 @@ def test_function_return_type():
     """ Register a function (with return type hint) as factory """
     from .factories import function_return_type
     from .factories.function_return_type import registry, LoginService
+
     scanner = Scanner(registry=registry)
     scanner.scan(function_return_type)
 
@@ -140,6 +151,7 @@ def test_function_return_type_decorator():
     """ Decorate a function (with return type hint) as factory """
     from .factories import function_return_type_decorator
     from .factories.function_return_type_decorator import LoginService
+
     registry = ServiceRegistry()
     scanner = Scanner(registry=registry)
     scanner.scan(function_return_type_decorator)
