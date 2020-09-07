@@ -1,10 +1,10 @@
 """
-Class with a __wired_factory class method but registered imperatively.
+Class with a __wired_factory class method and a decorator.
 
 This method gets passed the container and returns a constructed instance.
 """
 
-from wired import wired_factory, ServiceContainer, ServiceRegistry
+from wired import wired_factory, ServiceContainer
 
 
 @wired_factory()
@@ -13,6 +13,7 @@ class Customer:
         self.name = 'Some Customer'
 
 
+@wired_factory()
 class LoginService:
     def __init__(self, customer_name):
         self.customer_name = customer_name
@@ -21,7 +22,3 @@ class LoginService:
     def __wired_factory__(cls, container: ServiceContainer):
         customer: Customer = container.get(Customer)
         return cls(customer_name=customer.name)
-
-
-registry = ServiceRegistry()
-registry.register_service(LoginService)

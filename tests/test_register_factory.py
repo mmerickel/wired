@@ -146,13 +146,26 @@ def test_decorator_context():
     assert isinstance(result2, CustomLoginService)
 
 
-def test_custom_constructor():
+def test_custom_constructor_imperative():
     """ Service has a ``__wired_factory__ classmethod """
     from .factories import custom_factory
-    from .factories.custom_factory import LoginService
-    registry = ServiceRegistry()
+    from .factories.custom_factory import registry, LoginService
     scanner = Scanner(registry=registry)
     scanner.scan(custom_factory)
+
+    # Look up the login service
+    container: ServiceContainer = registry.create_container()
+    result: LoginService = container.get(LoginService)
+    assert 'Some Customer' == result.customer_name
+
+
+def test_custom_constructor_decorator():
+    """ Service has a ``__wired_factory__ classmethod and decorator """
+    from .factories import custom_factory_decorator
+    from .factories.custom_factory_decorator import LoginService
+    registry = ServiceRegistry()
+    scanner = Scanner(registry=registry)
+    scanner.scan(custom_factory_decorator)
 
     # Look up the login service
     container: ServiceContainer = registry.create_container()
