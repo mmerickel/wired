@@ -53,10 +53,10 @@ Imagine eliminating the ``def login_factory`` function and just doing this direc
 
 .. code-block:: python
 
-    registry.register_factory(LoginService)
+    registry.register_service(LoginService)
 
 How might that work?
-``registry.register_factory`` might look like this:
+``registry.register_service`` might look like this:
 
 .. code-block::
 
@@ -130,7 +130,7 @@ We now register this, as before:
 
 .. code-block:: python
 
-    registry.register_factory(LoginService)
+    registry.register_service(LoginService)
 
 The pseudo-code for ``register_factory`` changes a little, to sniff for the protocol:
 
@@ -156,7 +156,7 @@ The logic then is pretty simple:
 
 - Otherwise, it's the simple case, and make a simple function to act as the factory
 
-Just to be clear, with a decorator, no ``registry.register_factory`` is needed:
+Just to be clear, with a decorator, no ``registry.register_service`` is needed:
 
 .. code-block:: python
 
@@ -189,11 +189,11 @@ In such a case, register the function, not the type:
         customer_name = customer.name
         return LoginService(customer_name)
 
-    registry.register_factory(make_login_service)
+    registry.register_service(make_login_service)
 
 Ah, this is interesting!
 ``register_factory`` knows that it is passed a callable with a return type hint.
-It detects that case and does the equivalent of ``registry.register_factory(make_login_service, LoginService)``.
+It detects that case and does the equivalent of ``registry.register_service(make_login_service, LoginService)``.
 As such, it's a shorthand.
 
 It's more useful in the decorator form:
@@ -210,6 +210,12 @@ If the decorator was passed ``for_`` as an argument, it would register with that
 
 Registering a Function Ignoring Return Type
 ===========================================
+
+.. note::
+
+    This one is obsolete.
+    Even if Michael wanted to do it, there isn't really a way to do it when combined with the above, as functions will want to type hint their return values.
+    Instead, I will scratch this itch with a specialty decorator e.g. ``@component`` which ignores the return type hint and defaults to a ``for_`` matching the function name.
 
 Let's say you have a greeting system where a function can return a string.
 The string, though, has data from the container:
@@ -229,10 +235,8 @@ With this, if you then did the following registration, you could get the followi
 
 .. code-block:: python
 
-    registry.register_factory(Greeting)
+    registry.register_service(Greeting)
     # Register Customer and Configuration factories
     container = registry.create_container()
     greeting = container.get(Greeting)
     assert greeting == 'Hello Maria!'
-
-TODO Decide with Michael if this is legit. He might be against the type returned by ``.get()`` being different than the type of the lookup value.
