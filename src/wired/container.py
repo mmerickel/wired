@@ -1,6 +1,7 @@
+import functools
 import weakref
 from inspect import isclass
-from typing import TypeVar, Type
+from typing import TypeVar, Type, Optional
 
 from zope.interface import Interface, implementedBy, providedBy
 from zope.interface.adapter import AdapterRegistry
@@ -10,6 +11,7 @@ from zope.interface.interfaces import IInterface
 __all__ = ['ServiceContainer', 'ServiceRegistry', 'wired_factory']
 
 T = TypeVar('T')
+C = TypeVar('C')
 
 
 class Sentinel:
@@ -418,7 +420,13 @@ class ServiceRegistry:
         info = ServiceFactoryInfo(factory, iface, context_iface, wants_context)
         _register_factory(info, self._factories, iface, context_iface, name)
 
-    def register_service(self, klass: Type[T], *, context=None, name='') -> None:
+    def register_service(self,
+                         klass: Type[T],
+                         *,
+                         for_: Optional[Type[T]] = None,
+                         context=None,
+                         name='',
+                         ) -> None:
         """ No standalone factory function """
 
         # TODO Made a different method because register_factory
@@ -431,7 +439,7 @@ class ServiceRegistry:
                 raise ValueError(f'{klass.__name__} is not a class')
             return klass()
 
-        self.register_factory(factory, klass, context=context, name=name)
+        self.register_factory(factory, for_ if for_ else klass, context=context, name=name)
 
     def register_singleton(
             self, service, iface_or_type=Interface, *, context=None, name=''
@@ -477,19 +485,29 @@ except ImportError:
     Scanner = None
 
 
-def wired_factory(wrapped):
+def wired_factory(
+        *,
+        for_: Optional[Type[T]] = None,
+        context: Optional[Type[C]] = None,
+        name: str = '',
+):
     """ Decorator for registering factories """
 
-    def _wired_factory():
-        pass
+    # TODO Really wish I could support @wired_factory (without calling)
+    #   and @wired_factory()
 
-    # TODO Should we use functools.wraps here for good hygiene?
-    def callback(scanner: Scanner, name: str, cls):
-        registry: ServiceRegistry = getattr(scanner, 'registry')
-        registry.register_service(wrapped)
+    def _wired_factory(wrapped):
+        @functools.wraps(wrapped)
+        def callback(scanner: Scanner, name: str, cls: Type[T]):
+            registry: ServiceRegistry = getattr(scanner, 'registry')
+            registry.register_service(
+                wrapped, for_=for_, context=context, name=name,
+            )
 
-    attach(wrapped, callback, category='wired')
-    return wrapped
+        attach(wrapped, callback, category='wired')
+        return wrapped
+
+    return _wired_factory
 
 
 def _register_factory(info, factories, iface, context_iface, name):
@@ -498,7 +516,8 @@ def _register_factory(info, factories, iface, context_iface, name):
 
 def _find_factory(factories, iface, context_iface, name):
     return factories.lookup(
-        (IServiceFactory, context_iface), iface, name=name, default=None
+        (IServiceFactory, context_iface), iface,
+        name=name, default=None,
     )
 
 

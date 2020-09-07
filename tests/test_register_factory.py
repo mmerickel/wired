@@ -102,12 +102,45 @@ def test_first_decorator():
 
 
 def test_decorator_args():
-    """ Optionally call the decorator and pass context etc. """
+    """ Call the decorator with context etc. """
     from .factories import decorator_args
-    from .factories.decorator_args import LoginService
+    from .factories.decorator_args import LoginService, CustomLoginService
     registry = ServiceRegistry()
+
+    # First register the "built-in" service, then scan to get
+    # the custom override
+    registry.register_service(LoginService)
     scanner = Scanner(registry=registry)
     scanner.scan(decorator_args)
+
+    # Container and lookup for custom service
     container: ServiceContainer = registry.create_container()
-    result: LoginService = container.get(LoginService)
-    assert isinstance(result, LoginService)
+    result: CustomLoginService = container.get(LoginService)
+    assert isinstance(result, CustomLoginService)
+
+
+def test_decorator_context():
+    """ Two decorators each with a registered context """
+    from .factories import decorator_context
+    from .factories.decorator_context import (
+        LoginService, CustomLoginService,
+        Customer, CustomCustomer,
+    )
+    registry = ServiceRegistry()
+
+    # First register the "built-in" service, then scan to get
+    # the custom override
+    scanner = Scanner(registry=registry)
+    scanner.scan(decorator_context)
+
+    # Container and lookup for context=Customer
+    context1 = Customer()
+    container1: ServiceContainer = registry.create_container(context=context1)
+    result1: CustomLoginService = container1.get(LoginService)
+    assert isinstance(result1, LoginService)
+
+    # Container and lookup for context=CustomCustomer
+    context2 = CustomCustomer()
+    container2: ServiceContainer = registry.create_container(context=context2)
+    result2: CustomLoginService = container2.get(LoginService)
+    assert isinstance(result2, CustomLoginService)
