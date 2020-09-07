@@ -363,7 +363,9 @@ class ServiceRegistry:
         return self._ServiceContainer(self._factories, context=context)
 
     def register_factory(
-            self, factory=None, iface_or_type=Interface, *, context=None, name=''
+            self, factory=None, iface_or_type=Interface,
+            *,
+            context=None, name=''
     ):
         """
         Register a service factory.
@@ -448,10 +450,15 @@ class ServiceRegistry:
                 # No, so make a very basic one
                 def factory(container: ServiceContainer) -> T:
                     if not isclass(klass_or_func):
-                        raise ValueError(f'{klass_or_func.__name__} is not a class')
+                        m = f'{klass_or_func.__name__} is not a class'
+                        raise ValueError(m)
                     return klass_or_func()
 
-        self.register_factory(factory, for_ if for_ else klass_or_func, context=context, name=name)
+        self.register_factory(
+            factory,
+            for_ if for_ else klass_or_func,
+            context=context, name=name,
+        )
 
     def register_singleton(
             self, service, iface_or_type=Interface, *, context=None, name=''
