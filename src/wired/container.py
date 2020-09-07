@@ -434,10 +434,13 @@ class ServiceRegistry:
         #  to know if just one argument was passed. Also, this method does
         #  not allow an Interface, as it doesn't have a constructor.
 
-        def factory(container: ServiceContainer) -> T:
-            if not isclass(klass):
-                raise ValueError(f'{klass.__name__} is not a class')
-            return klass()
+        try:
+            factory = klass.__wired_factory__
+        except AttributeError:
+            def factory(container: ServiceContainer) -> T:
+                if not isclass(klass):
+                    raise ValueError(f'{klass.__name__} is not a class')
+                return klass()
 
         self.register_factory(factory, for_ if for_ else klass, context=context, name=name)
 
@@ -498,7 +501,7 @@ def wired_factory(
 
     def _wired_factory(wrapped):
         @functools.wraps(wrapped)
-        def callback(scanner: Scanner, name: str, cls: Type[T]):
+        def callback(scanner: Scanner, _name: str, cls: Type[T]):
             registry: ServiceRegistry = getattr(scanner, 'registry')
             registry.register_service(
                 wrapped, for_=for_, context=context, name=name,
