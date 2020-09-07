@@ -1,5 +1,5 @@
 """
-Handle simple case with a decorator.
+Simple decorator usage but passing in context etc.
 """
 
 from wired import ServiceRegistry, wired_factory

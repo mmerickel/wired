@@ -480,6 +480,9 @@ except ImportError:
 def wired_factory(wrapped):
     """ Decorator for registering factories """
 
+    def _wired_factory():
+        pass
+
     # TODO Should we use functools.wraps here for good hygiene?
     def callback(scanner: Scanner, name: str, cls):
         registry: ServiceRegistry = getattr(scanner, 'registry')
