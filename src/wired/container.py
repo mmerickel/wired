@@ -1,11 +1,15 @@
 import weakref
+from inspect import isclass
+from typing import TypeVar, Type
+
 from zope.interface import Interface, implementedBy, providedBy
+from zope.interface.adapter import AdapterRegistry
 from zope.interface.interface import InterfaceClass
 from zope.interface.interfaces import IInterface
-from zope.interface.adapter import AdapterRegistry
 
+__all__ = ['ServiceContainer', 'ServiceRegistry', 'wired_factory']
 
-__all__ = ['ServiceContainer', 'ServiceRegistry']
+T = TypeVar('T')
 
 
 class Sentinel:
@@ -148,12 +152,12 @@ class ServiceContainer:
         )
 
     def get(
-        self,
-        iface_or_type=Interface,
-        *,
-        context=_marker,
-        name='',
-        default=_marker
+            self,
+            iface_or_type=Interface,
+            *,
+            context=_marker,
+            name='',
+            default=_marker
     ):
         """
         Find a cached instance or create one from the registered factory.
@@ -235,7 +239,7 @@ class ServiceContainer:
         return inst
 
     def set(
-        self, service, iface_or_type=Interface, *, context=_marker, name=''
+            self, service, iface_or_type=Interface, *, context=_marker, name=''
     ):
         """
         Add a service instance to the container.
@@ -276,7 +280,7 @@ class ServiceContainer:
         cache.register((IServiceInstance, context_iface), iface, name, service)
 
     def register_factory(
-        self, factory, iface_or_type=Interface, *, context=None, name=''
+            self, factory, iface_or_type=Interface, *, context=None, name=''
     ):
         """
         Register a service factory.
@@ -295,7 +299,7 @@ class ServiceContainer:
         _register_factory(info, factories, iface, context_iface, name)
 
     def register_singleton(
-        self, service, iface_or_type=Interface, *, context=None, name=''
+            self, service, iface_or_type=Interface, *, context=None, name=''
     ):
         """
         Register a singleton instance.
@@ -357,7 +361,7 @@ class ServiceRegistry:
         return self._ServiceContainer(self._factories, context=context)
 
     def register_factory(
-        self, factory, iface_or_type=Interface, *, context=None, name=''
+            self, factory=None, iface_or_type=Interface, *, context=None, name=''
     ):
         """
         Register a service factory.
@@ -406,6 +410,7 @@ class ServiceRegistry:
             ``iface_or_type`` is recommended for most services.
 
         """
+
         iface = _iface_for_type(iface_or_type)
         context_iface = _iface_for_context(context)
         wants_context = context is not None
@@ -413,8 +418,23 @@ class ServiceRegistry:
         info = ServiceFactoryInfo(factory, iface, context_iface, wants_context)
         _register_factory(info, self._factories, iface, context_iface, name)
 
+    def register_service(self, klass: Type[T], *, context=None, name='') -> None:
+        """ No standalone factory function """
+
+        # TODO Made a different method because register_factory
+        #  iface_or_type has default value of Interface, making it impossible
+        #  to know if just one argument was passed. Also, this method does
+        #  not allow an Interface, as it doesn't have a constructor.
+
+        def factory(container: ServiceContainer) -> T:
+            if not isclass(klass):
+                raise ValueError(f'{klass.__name__} is not a class')
+            return klass()
+
+        self.register_factory(factory, klass, context=context, name=name)
+
     def register_singleton(
-        self, service, iface_or_type=Interface, *, context=None, name=''
+            self, service, iface_or_type=Interface, *, context=None, name=''
     ):
         """
         Register a singleton instance.
@@ -448,6 +468,25 @@ class ServiceRegistry:
         svc_info = _find_factory(self._factories, iface, context_iface, name)
         if svc_info is not None:
             return svc_info.factory
+
+
+try:
+    from venusian import attach, Scanner
+except ImportError:
+    attach = None
+    Scanner = None
+
+
+def wired_factory(wrapped):
+    """ Decorator for registering factories """
+
+    # TODO Should we use functools.wraps here for good hygiene?
+    def callback(scanner: Scanner, name: str, cls):
+        registry: ServiceRegistry = getattr(scanner, 'registry')
+        registry.register_service(wrapped)
+
+    attach(wrapped, callback, category='wired')
+    return wrapped
 
 
 def _register_factory(info, factories, iface, context_iface, name):
