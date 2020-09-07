@@ -11,7 +11,11 @@ changes = readfile('CHANGES.rst')
 
 requires = ['zope.interface']
 
-docs_require = ['Sphinx', 'sphinx_rtd_theme', 'venusian;python_version>="3.7"']
+docs_require = [
+    'Sphinx',
+    'sphinx_rtd_theme',
+    'venusian;python_version>="3.7"',
+]
 
 tests_require = [
     'pytest',
