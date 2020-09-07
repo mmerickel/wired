@@ -3,9 +3,13 @@ Injection
 =========
 
 TODO
+
 - Handle optional container argument, simplest case
+
     - Not
+
     - By name
+
     - By type
 
 Simple DI By-Type

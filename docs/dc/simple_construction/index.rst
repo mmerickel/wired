@@ -38,7 +38,7 @@ The application is now finished starting up. Later on, it's time to process a "r
 
 Now let's put all these pieces together: models, application, configuration, and request processing:
 
-.. literalinclude:: ../../../tests/dataclasses/integration/test_dc_simple_construction.py
+.. literalinclude:: ../../../tests/wired_dataclasses/integration/test_dc_simple_construction.py
     :start-after: start-after
 
 This was a very simple example: the ``Greeter`` needed nothing from its environment because the only field had a default value. Thus, the only parts of "DI" used were construction of the dataclass instance.

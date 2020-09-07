@@ -27,5 +27,5 @@ There's a lot more to this, as we'll see in the following sections.
 
 To finish, we change our ``assert`` to add the period:
 
-.. literalinclude:: ../../../tests/dataclasses/integration/test_dc_simple_injection.py
+.. literalinclude:: ../../../tests/wired_dataclasses/integration/test_dc_simple_injection.py
     :start-after: start-after

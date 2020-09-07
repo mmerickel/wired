@@ -40,7 +40,7 @@ In both cases, we make a container for the request that sets the container's con
 
 To finish, we change our ``assert`` to test two cases:
 
-.. literalinclude:: ../../../tests/dataclasses/integration/test_dc_overrides.py
+.. literalinclude:: ../../../tests/wired_dataclasses/integration/test_dc_overrides.py
     :start-after: start-after
 
 With this, whenever the system asks for a ``Greeter``, if the container's current context is a ``FrenchCustomer``, they'll get ``FrenchGreeter`` instead of a plain ``Greeter``.

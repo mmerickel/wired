@@ -109,6 +109,7 @@ More Information
 
    usage
    factories
+   injection
    tutorial/index
    dc/index
    dc/usage

@@ -27,6 +27,6 @@ Our request processing is exactly the same as the previous step:
 
 Putting it all together: make an app, scan for decorators, and process requests:
 
-.. literalinclude:: ../../../tests/dataclasses/integration/test_dc_decorators.py
+.. literalinclude:: ../../../tests/wired_dataclasses/integration/test_dc_decorators.py
     :start-after: start-after
 
