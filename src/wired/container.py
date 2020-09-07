@@ -1,7 +1,7 @@
 import functools
 import weakref
-from inspect import isclass
-from typing import TypeVar, Type, Optional
+from inspect import isclass, isfunction
+from typing import TypeVar, Type, Optional, Union, Callable, get_type_hints
 
 from zope.interface import Interface, implementedBy, providedBy
 from zope.interface.adapter import AdapterRegistry
@@ -421,7 +421,7 @@ class ServiceRegistry:
         _register_factory(info, self._factories, iface, context_iface, name)
 
     def register_service(self,
-                         klass: Type[T],
+                         klass_or_func: Union[Type[T], Callable],
                          *,
                          for_: Optional[Type[T]] = None,
                          context=None,
@@ -434,15 +434,24 @@ class ServiceRegistry:
         #  to know if just one argument was passed. Also, this method does
         #  not allow an Interface, as it doesn't have a constructor.
 
-        try:
-            factory = klass.__wired_factory__
-        except AttributeError:
-            def factory(container: ServiceContainer) -> T:
-                if not isclass(klass):
-                    raise ValueError(f'{klass.__name__} is not a class')
-                return klass()
+        if isfunction(klass_or_func):
+            # Get the for_ from the function return type hint
+            th = get_type_hints(klass_or_func)
+            factory = klass_or_func
+            for_ = th.get('return')
+        else:
+            # Passed a class
+            try:
+                # Does the class have its own factory function?
+                factory = klass_or_func.__wired_factory__
+            except AttributeError:
+                # No, so make a very basic one
+                def factory(container: ServiceContainer) -> T:
+                    if not isclass(klass_or_func):
+                        raise ValueError(f'{klass_or_func.__name__} is not a class')
+                    return klass_or_func()
 
-        self.register_factory(factory, for_ if for_ else klass, context=context, name=name)
+        self.register_factory(factory, for_ if for_ else klass_or_func, context=context, name=name)
 
     def register_singleton(
             self, service, iface_or_type=Interface, *, context=None, name=''

@@ -171,3 +171,30 @@ def test_custom_constructor_decorator():
     container: ServiceContainer = registry.create_container()
     result: LoginService = container.get(LoginService)
     assert 'Some Customer' == result.customer_name
+
+
+def test_function_return_type():
+    """ Register a function (with return type hint) as factory """
+    from .factories import function_return_type
+    from .factories.function_return_type import registry, LoginService
+    scanner = Scanner(registry=registry)
+    scanner.scan(function_return_type)
+
+    # Look up the login service
+    container: ServiceContainer = registry.create_container()
+    result: LoginService = container.get(LoginService)
+    assert 'Some Customer' == result.customer_name
+
+
+def test_function_return_type_decorator():
+    """ Decorate a function (with return type hint) as factory """
+    from .factories import function_return_type_decorator
+    from .factories.function_return_type_decorator import LoginService
+    registry = ServiceRegistry()
+    scanner = Scanner(registry=registry)
+    scanner.scan(function_return_type_decorator)
+
+    # Look up the login service
+    container: ServiceContainer = registry.create_container()
+    result: LoginService = container.get(LoginService)
+    assert 'Some Customer' == result.customer_name
