@@ -122,7 +122,3 @@ def main():
     registry = app_bootstrap(settings)
     greetings = sample_interactions(registry)
     assert greetings == ['Hello Mary !!', 'Bonjour Henri !!']
-
-
-if __name__ == '__main__':
-    main()

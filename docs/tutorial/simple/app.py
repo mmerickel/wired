@@ -56,7 +56,3 @@ def main():
     registry = setup()
     greeting = greet_a_customer(registry)
     assert greeting == 'Hello !!'
-
-
-if __name__ == '__main__':
-    main()

@@ -45,3 +45,9 @@ def test_greet_french_customer(registry, french_customer):
 
     actual = greet_customer(registry, french_customer)
     assert 'Bonjour Henri !!' == actual
+
+
+def test_main():
+    from tutorial.context.app import main
+
+    assert None is main()
