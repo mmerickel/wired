@@ -29,4 +29,5 @@ def test_sample_interactions(registry):
 
 def test_main():
     from tutorial.datastore import main
+
     assert None is main()

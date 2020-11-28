@@ -14,6 +14,7 @@ def test_greeter(container, registry):
         Greeter,
         Greeting,
     )
+
     registry.register_factory(greeter_factory, Greeter)
     greeting: Greeting = container.get(Greeting)
     assert 'Hello from Marie' == greeting.greet()

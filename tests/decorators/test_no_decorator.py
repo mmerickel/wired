@@ -21,6 +21,7 @@ def test_greeter(container, registry):
         greeting_factory,
         Greeting,
     )
+
     registry.register_factory(greeter_factory, Greeter)
     registry.register_factory(greeting_factory, Greeting)
     greeting: Greeting = container.get(Greeting)

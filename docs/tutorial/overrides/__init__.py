@@ -63,7 +63,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
 
 
 def customer_interaction(
-        container: ServiceContainer, customer: Customer
+    container: ServiceContainer, customer: Customer
 ) -> str:
     """ Customer comes in, handle the steps in greeting them """
 
