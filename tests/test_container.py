@@ -1,6 +1,5 @@
 import pytest
-from zope.interface import Interface
-from zope.interface import implementer
+from zope.interface import Interface, implementer
 
 
 class IFooService(Interface):
@@ -48,6 +47,20 @@ class DummyFactory:
         return self.result
 
 
+class DummyWiredFactory:
+    def __init__(self, result=None):
+        if result is None:
+            result = DummyService()
+        self.result = result
+        self.calls = []
+
+    @classmethod
+    def __wired_factory__(cls, container):
+        inst = cls()
+        inst.calls.append(container)
+        return inst
+
+
 @pytest.fixture
 def registry():
     from wired import ServiceRegistry
@@ -81,6 +94,15 @@ def test_various_params(registry, iface, contexts, name):
     assert c.get(iface, context=context_obj, name=name) is factory.result
     assert c.get(iface, context=context_obj, name=name) is factory.result
     assert len(factory.calls) == 1
+
+
+def test_wired_factory(registry):
+    registry.register_factory(DummyWiredFactory, DummyWiredFactory)
+    c1 = registry.create_container()
+    result = c1.get(DummyWiredFactory)
+    assert isinstance(result, DummyWiredFactory)
+    assert result.calls[0] is c1
+    assert len(result.calls) == 1
 
 
 def test_basic_caching(registry):

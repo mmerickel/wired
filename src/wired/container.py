@@ -33,7 +33,9 @@ class IContextFinalizer(Interface):
 
 class ServiceFactoryInfo:
     def __init__(self, factory, service_iface, context_iface, wants_context):
-        self.factory = factory
+        # Use the __wired_factory__ protocol if present
+        _factory = getattr(factory, '__wired_factory__', factory)
+        self.factory = _factory
         self.service_iface = service_iface
         self.context_iface = context_iface
         self.wants_context = wants_context

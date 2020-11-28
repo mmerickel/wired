@@ -1,7 +1,7 @@
 # wired is usable without venusian
 try:
     import venusian
-except ImportError:
+except ImportError:  # pragma: no cover
     venusian = None
 
 
@@ -51,10 +51,7 @@ class factory:
             # class as the instance
             for_ = self.for_ if self.for_ else cls
 
-            def _default_factory(container):
-                return cls(container)
-
-            _factory = getattr(cls, '__wired_factory__', _default_factory)
+            _factory = getattr(cls, '__wired_factory__', cls)
             registry.register_factory(
                 _factory, for_, context=self.context, name=self.name
             )
