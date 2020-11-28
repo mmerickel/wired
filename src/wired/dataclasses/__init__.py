@@ -4,4 +4,3 @@ from .decorators import factory, singleton
 from .field_types import injected
 from .models import Context
 from .registration import register_dataclass
-

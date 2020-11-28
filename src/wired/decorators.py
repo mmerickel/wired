@@ -1,6 +1,8 @@
-from venusian import attach, Scanner
-
-from wired import ServiceRegistry
+# wired is usable without venusian
+try:
+    import venusian
+except ImportError:
+    venusian = None
 
 
 # noinspection PyPep8Naming
@@ -43,8 +45,8 @@ class factory:
         self.name = name
 
     def __call__(self, wrapped):
-        def callback(scanner: Scanner, name: str, cls):
-            registry: ServiceRegistry = getattr(scanner, 'registry')
+        def callback(scanner: venusian.Scanner, name: str, cls):
+            registry = getattr(scanner, 'registry')
             # If there is a for_ use it, otherwise, register for the same
             # class as the instance
             for_ = self.for_ if self.for_ else cls
@@ -57,5 +59,5 @@ class factory:
                 _factory, for_, context=self.context, name=self.name
             )
 
-        attach(wrapped, callback, category='wired')
+        venusian.attach(wrapped, callback, category='wired')
         return wrapped

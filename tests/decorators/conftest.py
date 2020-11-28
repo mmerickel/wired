@@ -1,7 +1,13 @@
+import sys
+
 import pytest
-from venusian import Scanner
 
 from wired import ServiceRegistry
+
+if sys.version_info < (3, 7):  # pragma: no cover
+    collect_ignore_glob = ['*.py']
+else:
+    from venusian import Scanner
 
 
 @pytest.fixture

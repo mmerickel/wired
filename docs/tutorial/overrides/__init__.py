@@ -59,7 +59,6 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     from .custom import setup as addon_setup
 
     addon_setup(registry, settings)
-
     return registry
 
 
