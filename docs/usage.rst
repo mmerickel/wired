@@ -79,9 +79,9 @@ Enter the ``__wired_factory__`` protocol.
 This is an attribute -- for example, a ``classmethod`` -- on the factory callable.
 It is passed the container and returns the class.
 
-.. literalinclude:: ../examples/wired_factory/wired_factory_classmethod.py
-    :start-at: @service_factory()
-    :end-at: return Greeter
+.. literalinclude:: ../examples/wired_factory/register_wired_factory.py
+    :start-at: @classmethod
+    :end-at: return cls
 
 This class method is then used as the first argument to :meth:`wired.ServiceRegistry.register_factory`.
 It doesn't have to be just for classes and class methods: a function/class/instance could have a ``__wired_factory__`` attribute stamped on it, possibly via an intermediate decorator.

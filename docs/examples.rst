@@ -43,7 +43,7 @@ The decorator then extracts the ``registry`` instance we stored in the ``Scanner
 What's nice about this venusian approach: no module-level state globals stuff.
 
 Another decorator plus ``__wired_factory__``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------------
 
 We'll now move the ``Greeter`` class to also use the ``@service_factory`` decorator instead of a manual registration.
 Since it hard-codes ``Marie`` as a value to the constructor, we use the ``__wired_factory__`` protocol as a class method to generate the instance.
@@ -56,9 +56,42 @@ Now its constructor no longer uses the ``container``, which is a huge surface ar
 Instead, the class is constructed just with the data it needs, which is nice for testing.
 The class method acts as an "adapter", getting stuff out of the container that is needed for the class.
 
+Decorator arguments
+-------------------
+
+The ``@service_factory`` acts as a replacement for ``register_factory``.
+Thus it needs to support the other arguments beyond the first one:
+
+- The ``service_or_iface``, if not provided, defaults to the class the decorator is decorating
+- If you pass ``for_=`` to the decorator, it will be used as the ``service_or_iface`` argument to
+- You can also pass ``context=`` and ``name=``
+
+Imagine our app now has a ``Customer`` and ``FrenchCustomer`` as container contexts.
+Here is an example of registering different ``Greeter`` classes that are unique to those contexts:
+
+.. literalinclude:: ../examples/decorators/decorator_args.py
 
 .. _examples-wired-factory:
 
 Wired Factory
 ~~~~~~~~~~~~~
+
+Registering a factory means two things: a callable that constructs and returns an object, then the "kind" of thing the factory is registered for.
+You can eliminate the callable as a separate function by providing a ``__wired_factory__`` callable *on*, for example, the class that gets constructed.
+
+This is the wired factory "protocol" and the callable acts as an adapter.
+It is handed the container, extracts what it needs, then constructs and returns an object.
+
+Basic wired factory callable
+----------------------------
+
+We start again with our simple app, with a ``Greeting`` that uses a ``Greeter``.
+In this case, we do two things:
+
+- Both classes have a ``classmethod`` that manages construction of instances
+- The ``register_factory`` first argument is, thus, the class itself
+
+.. literalinclude:: ../examples/wired_factory/register_wired_factory.py
+
+With this, when some application code calls ``container.get(Greeter)``, the construction is done by ``Greeter.__wired_factory__``.
 
