@@ -2,10 +2,10 @@
 Simple usage of a ``_wired_factory__`` classmethod.
 """
 from wired import ServiceContainer
-from wired import factory
+from wired import service_factory
 
 
-@factory()
+@service_factory()
 class Greeter:
     def __init__(self, name):
         self.name = name
@@ -15,7 +15,7 @@ class Greeter:
         return Greeter('Marie')
 
 
-@factory()
+@service_factory()
 class Greeting:
     def __init__(self, container: ServiceContainer):
         self.greeter = container.get(Greeter)

@@ -1,8 +1,8 @@
 """
-Simplest example for ``@factory`` decorator: a basic class.
+Simplest example for ``@service_factory`` decorator: a basic class.
 """
 from wired import ServiceContainer
-from wired import factory
+from wired import service_factory
 
 
 class Greeter:
@@ -10,7 +10,7 @@ class Greeter:
         self.name = name
 
 
-@factory()
+@service_factory()
 class Greeting:
     def __init__(self, container: ServiceContainer):
         self.greeter = container.get(Greeter)
