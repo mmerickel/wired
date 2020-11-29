@@ -31,9 +31,8 @@ class service_factory:
             # class as the instance
             for_ = self.for_ if self.for_ else cls
 
-            _factory = getattr(cls, '__wired_factory__', cls)
             registry.register_factory(
-                _factory, for_, context=self.context, name=self.name
+                cls, for_, context=self.context, name=self.name
             )
 
         venusian.attach(wrapped, callback, category='wired')
