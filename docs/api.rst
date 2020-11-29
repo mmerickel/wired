@@ -10,6 +10,9 @@
 .. autoclass:: ServiceRegistry
     :members:
 
+.. autoclass:: service_factory
+    :members:
+
 :mod:`wired.dataclasses` API
 ============================
 

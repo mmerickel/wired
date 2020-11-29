@@ -108,6 +108,7 @@ More Information
    :maxdepth: 1
 
    usage
+   examples
    tutorial/index
    dc/index
    dc/usage

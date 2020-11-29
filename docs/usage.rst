@@ -41,9 +41,52 @@ However, a service factory that is registered to provide instances of the ``Logi
 Anyone else registering such a service factory is directly competing for control of that type.
 It is possible to register for both type and name.
 
+As a note, when calling :meth:`wired.ServiceRegistry.register_factory`, the first argument is a callable.
+It doesn't have to be a function: it could be a class that accepts the container as an argument.
+In such a case, the class might be *both* arguments.
+This kind of usage is helpful when combined with the ``__wired_factory__`` protocol and the ``@service_factory`` decorator discussed below.
+
 Service factories accept one argument, a :class:`wired.ServiceContainer` instance.
 The container may be used to get any dependencies required to create the service and return it from the factory.
 The service is then cached on the container, available for any other factories or code to get.
+
+The ``@service_factory`` decorator
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It's quite convenient to register your factories with decorators, as you can just point at a module or package and not manually do each registration.
+``wired`` has optional support for the `venusian <https://pypi.org/project/venusian/>`_ package for deferred scanning and evaluation of decorators.
+You can then register your services with the :class:`wired.service_factory` decorator:
+
+.. literalinclude:: ../examples/decorators/basic_class.py
+    :start-at: import service_factory
+    :end-at: Hello from
+
+The decorator can take arguments of ``for_``, ``context``, and ``name``, to mimic the arguments to ``register_factory``.
+
+You can find more variations, including setup of the scanner, on this in the :ref:`examples-decorators` examples.
+
+The ``__wired_factory__`` protocol
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When you call :meth:`wired.ServiceRegistry.register_factory` the first argument is the factory "function".
+It takes a :class:`wired.ServiceContainer`, makes the desired object, and returns it.
+This means a separation: a "function" that makes the class instance, and the class.
+
+As we saw above, the first argument is really a callable that returns an instance, and that means the class itself can be the first argument.
+But what if you want custom logic to pick apart the container then construct the class?
+
+Enter the ``__wired_factory__`` protocol.
+This is an attribute -- for example, a ``classmethod`` -- on the factory callable.
+It is passed the container and returns the class.
+
+.. literalinclude:: ../examples/decorators/wired_factory_classmethod.py
+    :start-at: @service_factory()
+    :end-at: return Greeter
+
+This class method is then used as the first argument to :meth:`wired.ServiceRegistry.register_factory`.
+It doesn't have to be just for classes and class methods: a function/class/instance could have a ``__wired_factory__`` attribute stamped on it, possibly via an intermediate decorator.
+
+More examples are available in :ref:`examples-wired-factory`.
 
 Example
 ~~~~~~~
@@ -130,3 +173,4 @@ For example, imagine binding the web request itself as a service, or the active 
     # later ...
 
     user = container.get(IUser)
+
