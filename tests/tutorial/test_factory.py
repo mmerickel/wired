@@ -16,3 +16,9 @@ def test_greet_a_customer(registry):
 
     actual = greet_a_customer(registry)
     assert 'Hello !!' == actual
+
+
+def test_main():
+    from tutorial.factory.app import main
+
+    assert None is main()

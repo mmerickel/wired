@@ -25,3 +25,9 @@ def test_sample_interactions(registry):
     greetings = sample_interactions(registry)
     assert 'Override Mary !!' == greetings[0]
     assert 'Bonjour Henri !!' == greetings[1]
+
+
+def test_main():
+    from tutorial.overrides import main
+
+    assert None is main()

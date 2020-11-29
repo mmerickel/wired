@@ -111,7 +111,3 @@ def main():
     # then test the result.
     french_customer = FrenchCustomer(name='Henri')
     assert 'Bonjour Henri !!' == greet_customer(registry, french_customer)
-
-
-if __name__ == '__main__':
-    main()

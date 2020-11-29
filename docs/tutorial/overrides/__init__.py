@@ -36,7 +36,7 @@ def setup(registry: ServiceRegistry, settings: Settings):
     # Make the greeter factory, using punctuation from settings
     punctuation = settings.punctuation
 
-    def default_greeter_factory(container) -> Greeter:
+    def default_greeter_factory(container) -> Greeter:  # pragma: no cover
         # Use the dataclass default for greeting
         return Greeter(punctuation=punctuation)
 
@@ -59,7 +59,6 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     from .custom import setup as addon_setup
 
     addon_setup(registry, settings)
-
     return registry
 
 
@@ -97,8 +96,4 @@ def main():
     settings = Settings(punctuation='!!')
     registry = app_bootstrap(settings)
     greetings = sample_interactions(registry)
-    assert greetings == ['Hello Mary !!', 'Bonjour Henri !!']
-
-
-if __name__ == '__main__':
-    main()
+    assert ['Override Mary !!', 'Bonjour Henri !!'] == greetings
