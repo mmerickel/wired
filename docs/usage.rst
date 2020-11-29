@@ -79,7 +79,7 @@ Enter the ``__wired_factory__`` protocol.
 This is an attribute -- for example, a ``classmethod`` -- on the factory callable.
 It is passed the container and returns the class.
 
-.. literalinclude:: ../examples/decorators/wired_factory_classmethod.py
+.. literalinclude:: ../examples/wired_factory/wired_factory_classmethod.py
     :start-at: @service_factory()
     :end-at: return Greeter
 

@@ -1,5 +1,5 @@
 """
-Simplest example for ``@service_factory`` decorator: a basic class.
+Decorators for both plus usage of the ``__wired_factory__ protocol.
 """
 from venusian import Scanner
 
@@ -8,21 +8,29 @@ from .. import decorators
 
 
 @service_factory()
-class Greeting:
-    def __init__(self, container):
-        self.greeter = container.get(Greeter)
-
-    def greet(self):
-        return f'Hello from {self.greeter.name}'
-
-
 class Greeter:
     def __init__(self, name):
         self.name = name
 
+    @classmethod
+    def __wired_factory__(cls, container):
+        return cls('Marie')
 
-def greeter_factory(container):
-    return Greeter('Marie')
+
+@service_factory()
+class Greeting:
+    greeter: Greeter
+
+    def __init__(self, greeter: Greeter):
+        self.greeter = greeter
+
+    def greet(self):
+        return f'Hello from {self.greeter.name}'
+
+    @classmethod
+    def __wired_factory__(cls, container):
+        greeter = container.get(Greeter)
+        return cls(greeter)
 
 
 def app():
@@ -30,11 +38,7 @@ def app():
     registry = ServiceRegistry()
     scanner = Scanner(registry=registry)
     # Point the scanner at a package/module and scan
-    scanner.scan(decorators.basic_class)
-
-    registry.register_factory(greeter_factory, Greeter)
-    # No longer need this line
-    # registry.register_factory(Greeting, Greeting)
+    scanner.scan(decorators.decorator_with_wired_factory)
 
     # Do this for every "request" or operation
     container = registry.create_container()

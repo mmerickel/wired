@@ -1,4 +1,4 @@
-from wired import ServiceContainer
+from wired import ServiceContainer, ServiceRegistry
 
 
 class Greeter:
@@ -16,3 +16,15 @@ class Greeting:
 
 def greeter_factory(container):
     return Greeter('Marie')
+
+
+def app():
+    # Do this once at startup
+    registry = ServiceRegistry()
+    registry.register_factory(greeter_factory, Greeter)
+    registry.register_factory(Greeting, Greeting)
+
+    # Do this for every "request" or operation
+    container = registry.create_container()
+    greeting: Greeting = container.get(Greeting)
+    assert 'Hello from Marie' == greeting.greet()
