@@ -1,3 +1,20 @@
+0.3 (2020-11-29)
+================
+
+- Added the ``__wired_factory__`` protocol which enables classes/functions.
+  This feature allows objects to declare their factory in a reusable way
+  near the definition of the class/function instead of near the
+  ``ServiceRegistry.register_factory`` invocation. Build some decorators
+  that automatically inject this protocol!
+  See https://github.com/mmerickel/wired/pull/41
+
+- Added the ``wired.service_factory`` venusian decorator which can be used
+  to discover factories by setting up a ``venusian.Scanner`` and scanning
+  your code to auto-register the services. In the future ``wired`` will likely
+  provide top-level scanning, but for now you have to do it yourself and
+  there are examples in the docs.
+  See https://github.com/mmerickel/wired/pull/41
+
 0.2.2 (2020-05-26)
 ==================
 
