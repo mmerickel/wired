@@ -1,5 +1,5 @@
 # request.py
-from .models import Greeter, Customer, FrenchCustomer
+from .models import Customer, FrenchCustomer, Greeter
 
 
 def process_request(registry):

@@ -76,9 +76,7 @@ def setup(settings: Settings) -> ServiceRegistry:
 
     # Register it as a factory using its class for the "key", but
     # this time register with a "context"
-    registry.register_factory(
-        french_greeter_factory, Greeter, context=FrenchCustomer
-    )
+    registry.register_factory(french_greeter_factory, Greeter, context=FrenchCustomer)
 
     return registry
 

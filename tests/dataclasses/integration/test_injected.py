@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-
 import pytest
 import venusian
 
@@ -8,7 +7,7 @@ from wired.dataclasses import factory, injected
 
 
 class Context:
-    """ Just a marker """
+    """Just a marker"""
 
 
 @dataclass

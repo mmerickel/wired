@@ -16,13 +16,11 @@ These are some subclasses of field which wire up the common
 cases.
 
 """
-from dataclasses import field, Field
+from dataclasses import Field, field
 from zope.interface import Interface
 
 
-def injected(
-    iface_or_type=Interface, *, name='', attr=None, **kwargs
-) -> Field:
+def injected(iface_or_type=Interface, *, name='', attr=None, **kwargs) -> Field:
     """
     Customize how the field is populated from the generated factory.
 

@@ -1,6 +1,7 @@
 # configure.py
 from wired import ServiceRegistry
 from wired.dataclasses import register_dataclass
+
 from .models import Greeter
 
 

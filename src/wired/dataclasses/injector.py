@@ -1,4 +1,4 @@
-from dataclasses import dataclass, fields, Field, MISSING
+from dataclasses import MISSING, Field, dataclass, fields
 from typing import get_type_hints
 
 from wired import ServiceContainer
@@ -7,7 +7,7 @@ from wired.dataclasses.models import Context
 
 @dataclass()
 class Injector:
-    """ Introspect dataclass and get arguments from container """
+    """Introspect dataclass and get arguments from container"""
 
     # XXX I can't find anything more specific for a dataclass. Ideally
     # we'd have something like Type[dataclass]. In the stdlib, is_dataclass
@@ -31,7 +31,6 @@ class Injector:
 
         # Iterate through the dataclass fields
         for field_name, field_type in get_type_hints(target).items():
-
             # Doing this style of bailing out quickly for performance
             # reasons. Don't want to keep doing "if", though it
             # means some repetitions.
@@ -60,9 +59,7 @@ class Injector:
                     injected_target = container
                 else:
                     # Ask the registry for one of these
-                    injected_target = container.get(
-                        injected_type, name=injected_name
-                    )
+                    injected_target = container.get(injected_type, name=injected_name)
 
                 # If attr is used, get specified attribute off that instance
                 if injected_attr:

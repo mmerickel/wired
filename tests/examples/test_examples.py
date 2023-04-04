@@ -1,11 +1,11 @@
 import pytest
 
 from examples.decorators import (
+    basic_class,
+    decorator_args,
+    decorator_with_wired_factory,
     no_decorator,
     no_decorator_class,
-    basic_class,
-    decorator_with_wired_factory,
-    decorator_args,
 )
 from examples.wired_factory import register_wired_factory
 

@@ -14,9 +14,9 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
 import pkg_resources
+import sys
 
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory is
@@ -241,9 +241,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    ('index', 'wired', u'wired Documentation', [u'Michael Merickel'], 1)
-]
+man_pages = [('index', 'wired', u'wired Documentation', [u'Michael Merickel'], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False

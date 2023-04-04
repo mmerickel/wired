@@ -7,6 +7,7 @@ French Greeter.
 from dataclasses import dataclass
 
 from wired import ServiceRegistry
+
 from . import Customer, Greeter, Settings
 
 
@@ -30,6 +31,4 @@ def setup(registry: ServiceRegistry, settings: Settings):
 
     # Register it as a factory using its class for the "key", but
     # this time register with a "context"
-    registry.register_factory(
-        french_greeter_factory, Greeter, context=FrenchCustomer
-    )
+    registry.register_factory(french_greeter_factory, Greeter, context=FrenchCustomer)
