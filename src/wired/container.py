@@ -20,15 +20,15 @@ _marker = Sentinel('default')
 
 
 class IServiceFactory(Interface):
-    """ A marker interface for service factories."""
+    """A marker interface for service factories."""
 
 
 class IServiceInstance(Interface):
-    """ A marker interface for service instances."""
+    """A marker interface for service instances."""
 
 
 class IContextFinalizer(Interface):
-    """ A marker interface for a finalizer invocable when a context dies."""
+    """A marker interface for a finalizer invocable when a context dies."""
 
 
 class ServiceFactoryInfo:

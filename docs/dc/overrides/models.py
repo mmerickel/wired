@@ -7,21 +7,21 @@ from wired.dataclasses import factory
 @factory()
 @dataclass
 class Settings:
-    """ Store some configuration settings for the app """
+    """Store some configuration settings for the app"""
 
     punctuation: str = '.'
 
 
 @dataclass
 class Customer:
-    """ A basic customer """
+    """A basic customer"""
 
     name: str = 'Larry'
 
 
 @dataclass
 class FrenchCustomer:
-    """ A certain kind of customer """
+    """A certain kind of customer"""
 
     name: str = 'Anne'
 
@@ -29,7 +29,7 @@ class FrenchCustomer:
 @factory()
 @dataclass
 class Greeter:
-    """ A basic greeter """
+    """A basic greeter"""
 
     settings: Settings
     name: str = 'Mary'
@@ -42,7 +42,7 @@ class Greeter:
 @factory(for_=Greeter, context=FrenchCustomer)
 @dataclass
 class FrenchGreeter:
-    """ A greeter to use when the customer (context) is French """
+    """A greeter to use when the customer (context) is French"""
 
     settings: Settings
     name: str = 'Henri'

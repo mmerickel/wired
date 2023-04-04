@@ -7,7 +7,7 @@ from wired.dataclasses import factory
 @factory()
 @dataclass
 class Settings:
-    """ Store some configuration settings for the app """
+    """Store some configuration settings for the app"""
 
     punctuation: str = '.'
 

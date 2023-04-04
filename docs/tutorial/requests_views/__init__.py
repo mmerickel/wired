@@ -52,7 +52,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
 
 
 def setup(registry: ServiceRegistry, settings: Settings):
-    """ Initialize the features in the core application  """
+    """Initialize the features in the core application"""
 
     # Make and register the Datastore singleton
     datastore = Datastore()
@@ -100,7 +100,7 @@ def setup(registry: ServiceRegistry, settings: Settings):
 
 
 def process_request(registry: ServiceRegistry, url: str) -> str:
-    """ Given URL (customer name), make a Request to handle interaction """
+    """Given URL (customer name), make a Request to handle interaction"""
 
     # Make the container that this request gets processed in
     container = registry.create_container()
@@ -118,7 +118,7 @@ def process_request(registry: ServiceRegistry, url: str) -> str:
 
 
 def sample_interactions(registry: ServiceRegistry) -> List[str]:
-    """ Pretend to do a couple of customer interactions """
+    """Pretend to do a couple of customer interactions"""
 
     return [process_request(registry, url) for url in ('mary', 'henri')]
 

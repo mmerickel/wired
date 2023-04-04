@@ -26,7 +26,7 @@ from .models import Customer, Datastore, Greeter, Settings
 
 
 def setup(registry: ServiceRegistry, settings: Settings):
-    """ Initialize the features in the core application  """
+    """Initialize the features in the core application"""
 
     # Make and register the Datastore
     datastore = Datastore()
@@ -65,7 +65,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
 def customer_interaction(
     container: ServiceContainer, customer: Customer
 ) -> str:
-    """ Customer comes in, handle the steps in greeting them """
+    """Customer comes in, handle the steps in greeting them"""
 
     # Get a Greeter using the customer as context. Use the Customer when
     # generating the greeting.
@@ -76,7 +76,7 @@ def customer_interaction(
 
 
 def sample_interactions(registry: ServiceRegistry) -> List[str]:
-    """ Pretend to do a couple of customer interactions """
+    """Pretend to do a couple of customer interactions"""
 
     greetings = []
 

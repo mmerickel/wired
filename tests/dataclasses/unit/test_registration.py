@@ -12,7 +12,7 @@ class DummyGreeter:
 
 @dataclass
 class DummyCustomer:
-    """ Use this as a context in the container """
+    """Use this as a context in the container"""
 
     name: str = 'dummy_customer'
 
