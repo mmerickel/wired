@@ -1,4 +1,5 @@
 from wired import ServiceRegistry
+
 from .injector import Injector
 
 

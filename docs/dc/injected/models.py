@@ -1,7 +1,7 @@
 # models.py
 from dataclasses import dataclass
 
-from wired.dataclasses import factory, injected, Context
+from wired.dataclasses import Context, factory, injected
 
 
 @factory()

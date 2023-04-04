@@ -1,10 +1,9 @@
 from dataclasses import dataclass, field
+import pytest
 from typing import Optional
 
-import pytest
-
-from wired import ServiceRegistry, ServiceContainer
-from wired.dataclasses import injected, Context
+from wired import ServiceContainer, ServiceRegistry
+from wired.dataclasses import Context, injected
 from wired.dataclasses.injector import Injector
 
 

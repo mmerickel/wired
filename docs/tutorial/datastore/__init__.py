@@ -22,7 +22,7 @@ Simple wired application:
 from dataclasses import dataclass, field
 from typing import List
 
-from wired import ServiceRegistry, ServiceContainer
+from wired import ServiceContainer, ServiceRegistry
 
 
 @dataclass
@@ -87,9 +87,7 @@ def app_bootstrap(settings: Settings) -> ServiceRegistry:
     return registry
 
 
-def customer_interaction(
-    container: ServiceContainer, customer: Customer
-) -> str:
+def customer_interaction(container: ServiceContainer, customer: Customer) -> str:
     """Customer comes in, handle the steps in greeting them"""
 
     # Get a Greeter using the customer as context. Use the Customer when

@@ -1,9 +1,8 @@
 import weakref
 from zope.interface import Interface, implementedBy, providedBy
+from zope.interface.adapter import AdapterRegistry
 from zope.interface.interface import InterfaceClass
 from zope.interface.interfaces import IInterface
-from zope.interface.adapter import AdapterRegistry
-
 
 __all__ = ['ServiceContainer', 'ServiceRegistry']
 
@@ -150,12 +149,7 @@ class ServiceContainer:
         )
 
     def get(
-        self,
-        iface_or_type=Interface,
-        *,
-        context=_marker,
-        name='',
-        default=_marker
+        self, iface_or_type=Interface, *, context=_marker, name='', default=_marker
     ):
         """
         Find a cached instance or create one from the registered factory.
@@ -208,9 +202,7 @@ class ServiceContainer:
 
         # lookup in the global registry
         if svc_info is None:
-            svc_info = _find_factory(
-                self._factories, iface, context_iface, name
-            )
+            svc_info = _find_factory(self._factories, iface, context_iface, name)
 
         if svc_info is None:
             if default is not _marker:
@@ -236,9 +228,7 @@ class ServiceContainer:
         )
         return inst
 
-    def set(
-        self, service, iface_or_type=Interface, *, context=_marker, name=''
-    ):
+    def set(self, service, iface_or_type=Interface, *, context=_marker, name=''):
         """
         Add a service instance to the container.
 

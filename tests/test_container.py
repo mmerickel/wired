@@ -160,16 +160,12 @@ def test_different_contexts_in_nested_lookup(registry):
     def admin_roles_factory(_):
         return AdminRoles()
 
-    registry.register_factory(
-        admin_roles_factory, UserRoles, context=AdminArea
-    )
+    registry.register_factory(admin_roles_factory, UserRoles, context=AdminArea)
 
     def default_roles_factory(_):
         return DefaultRoles()
 
-    registry.register_factory(
-        default_roles_factory, UserRoles, context=DefaultArea
-    )
+    registry.register_factory(default_roles_factory, UserRoles, context=DefaultArea)
 
     def user_factory(container):
         roles = container.get(UserRoles)

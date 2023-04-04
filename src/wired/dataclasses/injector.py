@@ -1,4 +1,4 @@
-from dataclasses import dataclass, fields, Field, MISSING
+from dataclasses import MISSING, Field, dataclass, fields
 from typing import get_type_hints
 
 from wired import ServiceContainer
@@ -59,9 +59,7 @@ class Injector:
                     injected_target = container
                 else:
                     # Ask the registry for one of these
-                    injected_target = container.get(
-                        injected_type, name=injected_name
-                    )
+                    injected_target = container.get(injected_type, name=injected_name)
 
                 # If attr is used, get specified attribute off that instance
                 if injected_attr:

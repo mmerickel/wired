@@ -1,9 +1,8 @@
 from dataclasses import dataclass, field
-
 import pytest
 import venusian
 
-from wired import ServiceRegistry, ServiceContainer
+from wired import ServiceContainer, ServiceRegistry
 from wired.dataclasses import factory
 
 

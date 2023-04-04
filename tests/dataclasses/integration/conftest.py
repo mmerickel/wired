@@ -1,7 +1,6 @@
 import os
-import sys
-
 import pytest
+import sys
 
 
 @pytest.fixture(scope="session", autouse=True)

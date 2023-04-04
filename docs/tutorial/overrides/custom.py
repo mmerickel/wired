@@ -6,8 +6,9 @@ French Greeter.
 """
 from dataclasses import dataclass
 
-from wired import ServiceRegistry, ServiceContainer
-from .models import Customer, Greeter, Settings, Datastore
+from wired import ServiceContainer, ServiceRegistry
+
+from .models import Customer, Datastore, Greeter, Settings
 
 
 @dataclass
@@ -34,9 +35,7 @@ def setup(registry: ServiceRegistry, settings: Settings):
 
     # Register it as a factory using its class for the "key", but
     # this time register with a "context"
-    registry.register_factory(
-        french_greeter_factory, Greeter, context=FrenchCustomer
-    )
+    registry.register_factory(french_greeter_factory, Greeter, context=FrenchCustomer)
 
     # *** OVERRIDE !!! This add-on replaces the core, built-in Greeter
     # with a different implementation.
@@ -45,9 +44,7 @@ def setup(registry: ServiceRegistry, settings: Settings):
 
     # Register it as a factory using its class for the "key", but
     # this time register with a "context"
-    registry.register_factory(
-        override_greeter_factory, Greeter, context=Customer
-    )
+    registry.register_factory(override_greeter_factory, Greeter, context=Customer)
 
     # Grab the Datastore and add a FrenchCustomer
     container: ServiceContainer = registry.create_container()

@@ -24,16 +24,8 @@ Simple wired application:
 from typing import List
 
 from wired import ServiceRegistry
-from .models import (
-    Customer,
-    Datastore,
-    Greeter,
-    Resource,
-    Request,
-    Settings,
-    Url,
-    View,
-)
+
+from .models import Customer, Datastore, Greeter, Request, Resource, Settings, Url, View
 
 
 def app_bootstrap(settings: Settings) -> ServiceRegistry:
