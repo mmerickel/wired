@@ -457,6 +457,10 @@ def _iface_for_type(obj):
     if IInterface.providedBy(obj):
         return obj
 
+    # if the object is a string then the user forgot to specify `name=""`
+    if isinstance(obj, str):
+        raise ValueError("Class expected, not string.  Did you forget 'name=...'?")
+
     # look for a cached iface
     iface = obj.__dict__.get('_service_iface', None)
     if iface is not None:
