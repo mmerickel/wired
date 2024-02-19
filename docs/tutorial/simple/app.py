@@ -13,6 +13,7 @@ Very simple wired application:
 - Singleton that says hello
 
 """
+
 from dataclasses import dataclass
 
 from wired import ServiceRegistry

@@ -17,6 +17,7 @@ Simple wired application:
 - A default Customer and FrenchCustomer
 
 """
+
 from dataclasses import dataclass
 
 from wired import ServiceRegistry

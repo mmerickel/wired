@@ -21,6 +21,7 @@ Simple wired application:
 - Request and View factories to assemble the full processing chain
 
 """
+
 from typing import List
 
 from wired import ServiceRegistry

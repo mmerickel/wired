@@ -19,6 +19,7 @@ Simple wired application:
 - A Datastore which stores/retrieves instances of Customers
 
 """
+
 from dataclasses import dataclass, field
 from typing import List
 

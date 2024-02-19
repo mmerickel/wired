@@ -17,6 +17,7 @@ Simple wired application:
 - Factory that says hello
 
 """
+
 from dataclasses import dataclass
 
 from wired import ServiceRegistry

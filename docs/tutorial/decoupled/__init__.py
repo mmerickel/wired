@@ -17,6 +17,7 @@ Simple wired application:
 - An add-on which defines a FrenchGreeter and FrenchCustomer
 
 """
+
 from dataclasses import dataclass
 
 from wired import ServiceRegistry

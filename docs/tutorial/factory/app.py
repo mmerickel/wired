@@ -13,6 +13,7 @@ Simple wired application:
 - Factory to get a Greeter that says hello
 
 """
+
 from dataclasses import dataclass
 
 from wired import ServiceRegistry

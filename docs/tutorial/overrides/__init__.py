@@ -19,6 +19,7 @@ Simple wired application:
 - A Datastore which stores/retrieves instances of Customers
 
 """
+
 from typing import List
 
 from wired import ServiceContainer, ServiceRegistry

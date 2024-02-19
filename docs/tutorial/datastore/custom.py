@@ -4,6 +4,7 @@ A custom add-on to our app which adds FrenchCustomer and
 French Greeter.
 
 """
+
 from dataclasses import dataclass
 
 from wired import ServiceContainer, ServiceRegistry
