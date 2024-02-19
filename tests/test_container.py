@@ -241,6 +241,13 @@ def test_unregistered_lookup(registry):
     assert c.get(IBarService, default=marker) is marker
 
 
+def test_missing_factory_name(registry):
+    factory = DummyFactory()
+    registry.register_factory(factory, name='foo')
+    with pytest.raises(ValueError):
+        registry.find_factory('foo')  # forgot the `name` keyword
+
+
 def test_unique_class_objects_with_same_name_dont_conflict(registry):
     def make_class():
         class Greeter:
