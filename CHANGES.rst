@@ -1,9 +1,9 @@
 unreleased
 ==========
 
-- Drop Python 3.5, and 3.6.
+- Drop Python 3.5, 3.6, and 3.7.
 
-- Add Python 3.9, 3.10, 3.11.
+- Add Python 3.9, 3.10, 3.11, and 3.12.
 
 0.3 (2020-11-29)
 ================

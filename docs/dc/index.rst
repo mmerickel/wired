@@ -40,7 +40,7 @@ Or a decorator version which overrides the built-in ``Greeter`` for a ``FrenchCu
 Why Is This Interesting?
 ========================
 
-``wired`` provides a library for Inversion-of-Control (IoC.) You can use this to write your own dependency injection system. Or you can use ``wired.dataclasses``, an optional part of ``wired`` targeting Python 3.7+ (or using the 3.6 backport of dataclasses.)
+``wired`` provides a library for Inversion-of-Control (IoC.) You can use this to write your own dependency injection system. Or you can use ``wired.dataclasses``, an optional part of ``wired`` targeting Python's ``dataclasses``.
 
 Also, you don't need to write a factory function. ``wired.dataclasses`` does this for you. (Though you can provide your own in a class method.)
 

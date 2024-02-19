@@ -465,7 +465,7 @@ def _iface_for_type(obj):
     # make a new iface and cache it on the object
     name = obj.__qualname__
     iface = InterfaceClass(
-        '%s_%s_IService' % (name, id(obj)),
+        '{}_{}_IService'.format(name, id(obj)),
         __doc__='service_factory generated interface',
     )
     obj._service_iface = iface

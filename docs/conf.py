@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 # flake8: noqa
 #
 # wired documentation build configuration file, created by
@@ -65,8 +64,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'wired'
-copyright = u'2018, Michael Merickel'
+project = 'wired'
+copyright = '2018, Michael Merickel'
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -210,8 +209,8 @@ latex_documents = [
     (
         'index',
         'wired.tex',
-        u'wired Documentation',
-        u'Michael Merickel',
+        'wired Documentation',
+        'Michael Merickel',
         'manual',
     )
 ]
@@ -241,7 +240,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [('index', 'wired', u'wired Documentation', [u'Michael Merickel'], 1)]
+man_pages = [('index', 'wired', 'wired Documentation', ['Michael Merickel'], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -256,8 +255,8 @@ texinfo_documents = [
     (
         'index',
         'wired',
-        u'wired Documentation',
-        u'Michael Merickel',
+        'wired Documentation',
+        'Michael Merickel',
         'wired',
         'One line description of project.',
         'Miscellaneous',

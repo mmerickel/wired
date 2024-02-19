@@ -15,11 +15,11 @@ jobs:
         strategy:
             matrix:
                 py:
-                    - "3.7"
                     - "3.8"
                     - "3.9"
                     - "3.10"
                     - "3.11"
+                    - "3.12"
                     - "pypy-3.8"
                 os:
                     - "ubuntu-latest"
@@ -54,11 +54,11 @@ jobs:
             - name: Setup python
               uses: actions/setup-python@v4
               with:
-                  python-version: "3.7"
+                  python-version: "3.8"
                   architecture: x64
 
             - run: pip install tox
-            - run: tox -e py37,coverage
+            - run: tox -e py38,coverage
     docs:
         runs-on: ubuntu-latest
         name: Build the documentation
@@ -67,7 +67,7 @@ jobs:
             - name: Setup python
               uses: actions/setup-python@v4
               with:
-                  python-version: "3.7"
+                  python-version: "3.8"
                   architecture: x64
             - run: pip install tox
             - run: tox -e docs
@@ -79,7 +79,7 @@ jobs:
             - name: Setup python
               uses: actions/setup-python@v4
               with:
-                  python-version: "3.7"
+                  python-version: "3.8"
                   architecture: x64
             - run: pip install tox
             - run: tox -e lint
