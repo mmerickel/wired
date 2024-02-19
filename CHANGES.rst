@@ -5,6 +5,10 @@ unreleased
 
 - Add Python 3.9, 3.10, 3.11, and 3.12.
 
+- Add a helpful error message if the ``name=`` argument is forgotten by
+  simply passing a string directly into ``get('oops')``.
+  See https://github.com/mmerickel/wired/pull/44
+
 0.3 (2020-11-29)
 ================
 
